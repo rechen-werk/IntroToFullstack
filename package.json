@@ -1,0 +1,21 @@
+{
+  "name": "introtofullstack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "start": "npm run build && node build/bin/www.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "^4.3.4",
+    "express": "~4.19.2",
+    "http-errors": "~1.6.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.12.7"
+  }
+}
