@@ -8,6 +8,8 @@ import userRouter from "./routes/users";
 import calendarRouter from "./routes/calendars";
 import requestsRouter from "./routes/requests";
 
+import db from "./services/db";
+
 const app = express();
 
 app.use(logger('dev'));
@@ -35,5 +37,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+db
 
 export default app;
