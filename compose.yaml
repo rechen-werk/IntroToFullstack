@@ -5,7 +5,7 @@ services:
     command: npm run start-backend
     develop:
       watch:
-        - action: sync
+        - action: sync+restart
           path: ./backend/
           target: /home/big-brains/app
           ignore:
@@ -25,5 +25,5 @@ services:
     container_name: app-frontend
     ports:
       - "8000:8000"
-    links:
-    - backend
+    # links:
+    # - backend
