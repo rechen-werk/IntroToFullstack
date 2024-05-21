@@ -49,13 +49,17 @@
     --color-text: var(--vt-c-text-dark-2);
   }
 }
-
+@font-face {
+  font-family: Montserrat;
+  src: url('@/assets/font/static/Montserrat-Medium.ttf');
+}
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
   font-weight: normal;
+  font-family: Montserrat, Arial, Verdana, Helvetica, sans-serif;
 }
 
 body {
