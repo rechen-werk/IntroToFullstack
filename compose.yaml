@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    command: npm run start-backend
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/
+          target: /home/big-brains/app
+          ignore:
+            - ./backend/node_modules/
+    container_name: app-backend
+  frontend:
+    build:
+      context: ./frontend
+    command: npm run start-frontend
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/
+          target: /home/big-brains/app
+          ignore:
+            - ./frontend/node_modules/
+    container_name: app-frontend
+    ports:
+      - "8000:8000"
+    links:
+    - backend
