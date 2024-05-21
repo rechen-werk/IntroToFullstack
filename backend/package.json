@@ -11,7 +11,8 @@
     "debug": "^4.3.4",
     "express": "~4.19.2",
     "http-errors": "~1.6.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",
