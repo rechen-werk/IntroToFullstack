@@ -1,4 +1,5 @@
 import express from "express";
+import db from "../services/db";
 
 const router = express.Router();
 
@@ -32,10 +33,14 @@ router.put('/mail/:userId/:mail', function(req, res) {
 });
 
 /* PUT updates the username for the user with this id. */
-router.put('/name/:userId/:name', function(req, res) {
+router.put('/name/:userId/:name', async function(req, res) {
   const userId: string = req.params.userId
   const name: string = req.params.name
 
+  // TODO: get email address!
+  const email: string = "example@gmail.com"
+
+  await db.user.createUser(userId, name, email);
   res.send({ userId, name })
 });
 

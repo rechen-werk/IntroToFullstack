@@ -5,7 +5,6 @@ import fs from 'fs';
 const DIR = './local';
 const DB_NAME = 'bookYaMate.db';
 
-/* TODO: fix creating database
 if (!fs.existsSync(DIR)) {
     fs.mkdirSync(DIR);
 }
@@ -27,13 +26,8 @@ function loadTables() {
     db.exec(queries.CREATE_TABLE.USER);
     db.exec(queries.CREATE_TABLE.CALENDAR);
     db.exec(queries.CREATE_TABLE.REQUEST);
-    console.log('Created tables.');
-
-    // db.run(queries.INSERT.USER, "id1234", "Hans", "hans@gmail.com");
-    // db.exec("COMMIT");
-    // console.log(db.run(queries.SELECT.USER_BY_ID, "id1234"));
+    console.log('Loaded tables.');
 }
-//*/
 
 // --- SEARCH ---
 async function findUserById(userId: string) { }
@@ -43,7 +37,10 @@ async function findRequestsByToUserId(toUserId: string) { }
 async function findCalendarsByUserId(userId: string) { }
 
 // --- INSERT ---
-async function createUser() { }
+async function createUser(userId: string, name: string, email: string) {
+    console.log(`Creating new user: ${userId}, ${name}, ${email}!`);
+    db.run(queries.INSERT.USER, userId, name, email)
+ }
 async function createCalendar() { }
 async function createRequest() { }
 
