@@ -3,16 +3,29 @@ defineProps<{
   name: string,
 }>()
 const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+function toggleCalendarLeft() {
+  console.log(weekReferenceDate)
+}
+
+function toggleCalendarRight() {
+  console.log(weekReferenceDate)
+}
+let weekReferenceDate = new Date()
 </script>
 
 <template>
   <div class="calendar-container">
     <nav class="calendar-nav">
-      <div>{{ name }}</div>
-      <button><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
-      <div>June 2024</div>
-      <button><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
-    </nav>
+      <div class="calendar-nav-left">{{ name }}</div>
+      <div class="calendar-nav-center">
+        <button @click="toggleCalendarLeft()"><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
+        <div class="calendar-nav-date">June 2024</div>
+        <button @click="toggleCalendarRight()"><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
+      </div>
+      <div class="calendar-nav-right">
+        <button>logout</button>
+      </div>
+      </nav>
     <div class="calendar-body">
       <div class="calendar-timeline">
         <div class="timeline-hour" v-for="index in 24" :key="index">
@@ -35,6 +48,9 @@ const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 </template>
 
 <style scoped>
+  * {
+    user-select: none;
+  }
   .calendar-container {
     flex: 1;
     display: inline-block;
@@ -47,27 +63,48 @@ const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
     width: 100%;
     background-color: black;
     color: yellow;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
 
     position: sticky;
     top: 0;
     z-index: 1000;
     flex-grow: 1;
+    justify-content: space-between;
+    padding: 8px;
+    font-size: 24px;
   }
-  .calendar-nav * {
-    user-select: none;
+
+  .calendar-nav-left {
+    text-align: left;
   }
-  .calendar-nav > button {
+
+  .calendar-nav-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .calendar-nav-date {
+    width: 164px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .calendar-nav-right {
+    text-align: right;
+  }
+  .calendar-nav > .calendar-nav-center > button {
     height: 48px;
     width: 48px;
     background: none;
     border: none;
   }
-  .calendar-nav > button > img:hover {
+  .calendar-nav > .calendar-nav-center > button > img:hover {
     filter: invert(100%)
   }
-  .calendar-nav > button > img {
+  .calendar-nav > .calendar-nav-center > button > img {
     height: 100%;
     width: 100%;
     filter: invert(80%);
