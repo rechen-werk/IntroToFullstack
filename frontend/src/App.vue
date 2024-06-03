@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import TheSidebar from "@/components/TheSidebar.vue";
 import TheCalendar from "@/components/TheCalendar.vue";
+import TheLoginPage from "@/components/TheLoginPage.vue";
 </script>
 
 <template>
   <header>
   </header>
   <main>
-    <div class="calendar">
+    <!--div class="calendar">
       <TheCalendar name="Adrian Vinojcic"/>
     </div>
     <div class="sidebar">
       <TheSidebar/>
-    </div>
+    </div-->
+    <TheLoginPage/>
   </main>
 </template>
 
