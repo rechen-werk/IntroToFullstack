@@ -8,7 +8,7 @@ defineProps<{
 <template>
   <div class="card">
     <button class="card-button" title="View Calendar">
-      <img src="/src/icons/binoculars-icon.png" alt="View Calendar">
+      <img src="/src/icons/binoculars-icon.png" alt="View Calendar of {{user.name}}">
     </button>
     <div class="card-text">
       <h1>{{ user.name }}</h1>

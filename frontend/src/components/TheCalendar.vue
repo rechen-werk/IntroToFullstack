@@ -7,9 +7,12 @@ const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 
 <template>
   <div class="calendar-container">
-    <div class="calendar-nav">
+    <nav class="calendar-nav">
       <div>{{ name }}</div>
-    </div>
+      <button><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
+      <div>June 2024</div>
+      <button><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
+    </nav>
     <div class="calendar-body">
       <div class="calendar-timeline">
         <div class="timeline-hour" v-for="index in 24" :key="index">
@@ -52,6 +55,23 @@ const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
     z-index: 1000;
     flex-grow: 1;
   }
+  .calendar-nav * {
+    user-select: none;
+  }
+  .calendar-nav > button {
+    height: 48px;
+    width: 48px;
+    background: none;
+    border: none;
+  }
+  .calendar-nav > button > img:hover {
+    filter: invert(100%)
+  }
+  .calendar-nav > button > img {
+    height: 100%;
+    width: 100%;
+    filter: invert(80%);
+   }
   .calendar-body {
     block-size: fit-content;
     display: flex;
