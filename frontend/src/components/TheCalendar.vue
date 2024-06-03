@@ -10,6 +10,10 @@ function toggleCalendarLeft() {
 function toggleCalendarRight() {
   console.log(weekReferenceDate)
 }
+
+function logout() {
+  console.log(weekReferenceDate)
+}
 let weekReferenceDate = new Date()
 </script>
 
@@ -23,7 +27,7 @@ let weekReferenceDate = new Date()
         <button @click="toggleCalendarRight()"><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
       </div>
       <div class="calendar-nav-right">
-        <button>logout</button>
+        <button class="logout-button" @click="logout()">Log out</button>
       </div>
       </nav>
     <div class="calendar-body">
@@ -62,7 +66,7 @@ let weekReferenceDate = new Date()
     height: 64px;
     width: 100%;
     background-color: black;
-    color: yellow;
+    color: #f1c40f;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
@@ -108,7 +112,21 @@ let weekReferenceDate = new Date()
     height: 100%;
     width: 100%;
     filter: invert(80%);
-   }
+  }
+  .logout-button {
+    padding: 10px 20px;
+    background-color: #f1c40f;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .logout-button:hover {
+    background-color: #f39c12;
+  }
   .calendar-body {
     block-size: fit-content;
     display: flex;
