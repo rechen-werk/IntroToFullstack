@@ -1,5 +1,6 @@
 <script lang="ts">
-import {decodeCredential} from "vue3-google-login";
+import {decodeCredential, googleLogout} from "vue3-google-login";
+import router from "@/router";
 
 export default {
   data() {
@@ -42,12 +43,12 @@ export default {
     },
 
     logout() {
-
+      googleLogout();
+      router.push(`/`);
     }
 
   }
 }
-
 
 </script>
 <template>
