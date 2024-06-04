@@ -40,8 +40,8 @@ router.put('/name/:userId/:name', async function(req, res) {
   // TODO: get email address!
   const email: string = "example@gmail.com"
 
-  await db.user.createUser(userId, name, email);
-  res.send({ userId, name })
+  await db.user.insertUser(email);
+  res.send({ email })
 });
 
 export default router;

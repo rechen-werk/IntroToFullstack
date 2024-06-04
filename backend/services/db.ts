@@ -1,6 +1,7 @@
 import { Database, OPEN_READWRITE, OPEN_CREATE } from "sqlite3";
 import queries from "./dbQueries";
 import fs from 'fs';
+import { Calendar, CalendarRequest, RequestStatus } from "./types";
 
 const DIR = './local';
 const DB_NAME = 'bookYaMate.db';
@@ -22,7 +23,6 @@ let db = new Database(`${DIR}/${DB_NAME}`,
 
 // --- TABLES ---
 function loadTables() {
-
     db.exec(queries.CREATE_TABLE.USER);
     db.exec(queries.CREATE_TABLE.CALENDAR);
     db.exec(queries.CREATE_TABLE.REQUEST);
@@ -30,48 +30,92 @@ function loadTables() {
 }
 
 // --- SEARCH ---
-async function findUserById(userId: string) { }
-async function findUsersByName(name: string) { }
-async function findRequestsByFromUserId(fromUserId: string) { }
-async function findRequestsByToUserId(toUserId: string) { }
-async function findCalendarsByUserId(userId: string) { }
+function queryRequests(query: string): Promise<[CalendarRequest]> { 
+    return new Promise((resolve, reject) => {
+        db.all(query, (error: Error, rows: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(rows.map((row: any) => new CalendarRequest(row.id, row.from_email, row.to_email, row.start, row.end, row.title, row.description, row.status, row.active)));
+            }
+        });
+    });
+}
+async function findRequestsByFromUserId(fromUserId: string): Promise<[CalendarRequest]> { 
+    return queryRequests(queries.SELECT.REQUESTS_BY_FROM_EMAIL);
+}
+async function findRequestsByToUserId(toUserId: string): Promise<[CalendarRequest]> {
+    return queryRequests(queries.SELECT.REQUESTS_BY_TO_EMAIL);
+}
+async function findCalendarsByEmail(email: string): Promise<[Calendar]> {
+    return new Promise((resolve, reject) => {
+        db.all(queries.SELECT.CALENDAR_BY_ID, [email], (error: Error, rows: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(rows.map((row: any) => new Calendar(row.id, row.ics_content, row.email, row.active)));
+            }
+        });
+    });
+}
 
 // --- INSERT ---
-async function createUser(userId: string, name: string, email: string) {
-    console.log(`Creating new user: ${userId}, ${name}, ${email}!`);
-    db.run(queries.INSERT.USER, userId, name, email)
+async function insertUser(email: string) {
+    console.log(`Creating new user: ${email}!`);
+    db.run(queries.INSERT.USER, email);
  }
-async function createCalendar() { }
-async function createRequest() { }
+async function insertCalendar(calendar: Calendar) {
+    console.log(`Creating new calendar: ${calendar.id}, ${calendar.email}!`);
+    db.run(queries.INSERT.CALENDAR, calendar.id, calendar.icsContent, calendar.email);
+}
+async function insertRequest(calendarRequest: CalendarRequest) {
+    console.log(`Creating new request: ${calendarRequest.id}, ${calendarRequest.fromEmail}, ${calendarRequest.toEmail}!`);
+    db.run(queries.INSERT.REQUEST, calendarRequest.id, calendarRequest.fromEmail, calendarRequest.toEmail, calendarRequest.start, calendarRequest.end, calendarRequest.title, calendarRequest.description);
+}
 
 // --- DELETE/ARCHIVE ---
-async function deleteUser() { }
-async function deleteCalendar() { }
-async function deleteRequest() { }
+async function deleteUser(email: string) {
+    console.log(`Deleting user: ${email}!`);
+    db.run(queries.DELETE.USER, email);
+}
+async function deleteCalendar(calendar: Calendar) {
+    console.log(`Deleting calendar: ${calendar.id}!`);
+    db.run(queries.DELETE.CALENDAR, calendar.id);
+}
+async function deleteRequest(request: CalendarRequest) {
+    console.log(`Deleting request: ${request.id}!`);
+    db.run(queries.DELETE.REQUEST, request.id);
+}
 
 // --- UPDATE ---
-async function acceptRequest() { }
-async function denyRequest() { }
+function updateRequestStatus(request: CalendarRequest, status: RequestStatus) {
+    console.log(`Updating request: ${request.id} to status: ${status}!`);
+    db.run(queries.UPDATE.REQUEST, status, request.id);
+}
+async function acceptRequest(request: CalendarRequest) {
+    updateRequestStatus(request, RequestStatus.ACCEPTED);
+}
+async function denyRequest(request: CalendarRequest) {
+    updateRequestStatus(request, RequestStatus.DENIED);
+}
 async function refreshCalendars() { }
 
 export default {
     user: {
-        findUserById,
-        findUsersByName,
-        createUser,
+        insertUser,
         deleteUser,
     },
     request: {
         findRequestsByFromUserId,
         findRequestsByToUserId,
-        createRequest,
+        insertRequest,
         deleteRequest,
         acceptRequest,
         denyRequest,
     },
     calendar: {
-        findCalendarsByUserId,
-        createCalendar,
+        findCalendarsByEmail,
+        insertCalendar,
         deleteCalendar,
         refreshCalendars,
     },
