@@ -1,12 +1,12 @@
 class Calendar {
-    id: number;
+    id: string;
     icsContent: string;
     email: string;
     active: boolean;
 
-    constructor(id: number, ics_content: string, email: string, active: boolean) {
+    constructor(id: string, icsContent: string, email: string, active: boolean) {
         this.id = id;
-        this.icsContent = ics_content;
+        this.icsContent = icsContent;
         this.email = email;
         this.active = active;
     }
@@ -16,14 +16,14 @@ class CalendarRequest {
     id: string;
     fromEmail: string; 
     toEmail: string; 
-    start: Date; 
-    end: Date; 
+    start: string; 
+    end: string; 
     title: string; 
     description: string;
     status: RequestStatus;
     active: boolean;
 
-    constructor(id: string, fromEmail: string, toEmail: string, start: Date, end: Date, title: string, description: string, status: RequestStatus, active: boolean) {
+    constructor(id: string, fromEmail: string, toEmail: string, start: string, end: string, title: string, description: string, status: RequestStatus, active: boolean) {
         this.id = id;
         this.fromEmail = fromEmail;
         this.toEmail = toEmail;
