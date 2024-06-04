@@ -1,44 +1,66 @@
 import express from "express";
+import db from "../services/db";
+import { CalendarRequest, RequestStatus } from "../utils/types";
 
 const router = express.Router();
 
 /* GET a list of all requests by the user with id. */
-router.get('/by/:userId', function(req, res,) {
-  const userId: string = req.params.userId
+router.get('/by/:email', async function(req, res,) {
+  const email: string = req.params.email
 
-  res.send({ userId });
+  const requests: [CalendarRequest] = await db.request.findRequestsByFromUserId(email); 
+
+  res.send({ requests });
 });
 
 /* GET a list of all requests for the user with id. */
-router.get('/for/:userId', function(req, res) {
-  const userId: string = req.params.userId
+router.get('/for/:email', async function(req, res) {
+  const email: string = req.params.email
 
-  res.send({ userId });
+  const requests: [CalendarRequest] = await db.request.findRequestsByToUserId(email); 
+
+  res.send({ requests });
 });
 
 /* POST creates a new request to toUserId from fromUserId. */
-router.post('/', function(req, res) {
-  const fromUserId = req.query.fromUserId
-  const toUserId = req.query.toUserId
-  res.send({ fromUserId, toUserId });
+router.post('/', async function(req, res) {
+  const id = "TODO";
+  const fromEmail = req.query.fromEmail.toString();
+  const toEmail = req.query.toEmail.toString();
+  const from = req.query.from.toString();
+  const to = req.query.to.toString();
+  const title = req.query.title.toString();
+  const description = req.query.description.toString();
+  const status = RequestStatus.OPEN;
+
+  await db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, description, status, true));
+
+  res.send({ fromEmail, toEmail });
 });
 
 /* DELETE sets the request with the given id to inactive. */
-router.delete('/:requestId', function(req, res) {
+router.delete('/:requestId', async function(req, res) {
   const requestId = req.params.requestId
+
+  await db.request.deleteRequest(requestId);
+
   res.send(`delete user with id: ${requestId}`);
 });
 
 /* PUT updates the request to be accepted. */
-router.put('/accept/:requestId', function(req, res) {
-  const requestId = req.query.requestId
+router.post('/accept/:requestId', async function(req, res) {
+  const requestId = req.params.requestId;
+
+  await db.request.acceptRequest(requestId);
 
   res.send({ requestId })
 });
 
 /* PUT updates the request to be denied. */
-router.put('/deny/:requestId', function(req, res) {
-  const requestId = req.query.requestId
+router.post('/deny/:requestId', async function(req, res) {
+  const requestId = req.params.requestId;
+
+  await db.request.denyRequest(requestId);
 
   res.send({ requestId })
 });

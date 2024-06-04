@@ -1,7 +1,7 @@
 import { Database, OPEN_READWRITE, OPEN_CREATE } from "sqlite3";
 import queries from "./dbQueries";
 import fs from 'fs';
-import { Calendar, CalendarRequest, RequestStatus } from "./types";
+import { Calendar, CalendarRequest, RequestStatus } from "../utils/types";
 
 const DIR = './local';
 const DB_NAME = 'bookYaMate.db';
@@ -23,6 +23,7 @@ let db = new Database(`${DIR}/${DB_NAME}`,
 
 // --- TABLES ---
 function loadTables() {
+    db.exec("PRAGMA foreign_keys = ON;");
     db.exec(queries.CREATE_TABLE.USER);
     db.exec(queries.CREATE_TABLE.CALENDAR);
     db.exec(queries.CREATE_TABLE.REQUEST);
@@ -30,9 +31,9 @@ function loadTables() {
 }
 
 // --- SEARCH ---
-function queryRequests(query: string): Promise<[CalendarRequest]> { 
+function queryRequests(query: string, email: string): Promise<[CalendarRequest]> { 
     return new Promise((resolve, reject) => {
-        db.all(query, (error: Error, rows: any) => {
+        db.all(query, [email], (error: Error, rows: any) => {
             if (error) {
                 reject(error);
             } else {
@@ -41,15 +42,15 @@ function queryRequests(query: string): Promise<[CalendarRequest]> {
         });
     });
 }
-async function findRequestsByFromUserId(fromUserId: string): Promise<[CalendarRequest]> { 
-    return queryRequests(queries.SELECT.REQUESTS_BY_FROM_EMAIL);
+async function findRequestsByFromUserId(email: string): Promise<[CalendarRequest]> { 
+    return queryRequests(queries.SELECT.REQUESTS_BY_FROM_EMAIL, email);
 }
-async function findRequestsByToUserId(toUserId: string): Promise<[CalendarRequest]> {
-    return queryRequests(queries.SELECT.REQUESTS_BY_TO_EMAIL);
+async function findRequestsByToUserId(email: string): Promise<[CalendarRequest]> {
+    return queryRequests(queries.SELECT.REQUESTS_BY_TO_EMAIL, email);
 }
 async function findCalendarsByEmail(email: string): Promise<[Calendar]> {
     return new Promise((resolve, reject) => {
-        db.all(queries.SELECT.CALENDAR_BY_ID, [email], (error: Error, rows: any) => {
+        db.all(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, rows: any) => {
             if (error) {
                 reject(error);
             } else {
@@ -58,6 +59,18 @@ async function findCalendarsByEmail(email: string): Promise<[Calendar]> {
         });
     });
 }
+async function findCalendarById(id: string): Promise<Calendar> {
+    return new Promise((resolve, reject) => {
+        db.get(queries.SELECT.CALENDAR_BY_ID, [id], (error: Error, row: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(new Calendar(row.id, row.ics_content, row.email, row.active));
+            }
+        });
+    });
+}
+
 
 // --- INSERT ---
 async function insertUser(email: string) {
@@ -70,39 +83,45 @@ async function insertCalendar(calendar: Calendar) {
 }
 async function insertRequest(calendarRequest: CalendarRequest) {
     console.log(`Creating new request: ${calendarRequest.id}, ${calendarRequest.fromEmail}, ${calendarRequest.toEmail}!`);
-    db.run(queries.INSERT.REQUEST, calendarRequest.id, calendarRequest.fromEmail, calendarRequest.toEmail, calendarRequest.start, calendarRequest.end, calendarRequest.title, calendarRequest.description);
+    db.run(queries.INSERT.REQUEST, calendarRequest.id, calendarRequest.fromEmail, calendarRequest.toEmail, calendarRequest.start, calendarRequest.end, calendarRequest.title, calendarRequest.description, calendarRequest.status);
 }
 
 // --- DELETE/ARCHIVE ---
 async function deleteUser(email: string) {
-    console.log(`Deleting user: ${email}!`);
+    console.log(`Deleting user ${email}!`);
     db.run(queries.DELETE.USER, email);
 }
-async function deleteCalendar(calendar: Calendar) {
-    console.log(`Deleting calendar: ${calendar.id}!`);
-    db.run(queries.DELETE.CALENDAR, calendar.id);
+async function deleteCalendar(id: string) {
+    console.log(`Deleting calendar ${id}!`);
+    db.run(queries.UPDATE.CALENDAR_ACTIVE, false, id);
 }
-async function deleteRequest(request: CalendarRequest) {
-    console.log(`Deleting request: ${request.id}!`);
-    db.run(queries.DELETE.REQUEST, request.id);
+async function deleteRequest(id: string) {
+    console.log(`Deleting request ${id}!`);
+    db.run(queries.UPDATE.REQUEST_ACTIVE, false, id);
 }
 
 // --- UPDATE ---
-function updateRequestStatus(request: CalendarRequest, status: RequestStatus) {
-    console.log(`Updating request: ${request.id} to status: ${status}!`);
-    db.run(queries.UPDATE.REQUEST, status, request.id);
+async function updateUserEmail(oldEmail: string, newEmail: string) {
+    console.log(`Updating user ${oldEmail} to email ${newEmail}!`);
+    db.run(queries.UPDATE.USER, newEmail, oldEmail);
 }
-async function acceptRequest(request: CalendarRequest) {
-    updateRequestStatus(request, RequestStatus.ACCEPTED);
+
+function updateRequestStatus(id: string, status: RequestStatus) {
+    console.log(`Updating request ${id} to status ${status}!`);
+    db.run(queries.UPDATE.REQUEST_STATUS, status, id);
 }
-async function denyRequest(request: CalendarRequest) {
-    updateRequestStatus(request, RequestStatus.DENIED);
+async function acceptRequest(id: string) {
+    updateRequestStatus(id, RequestStatus.ACCEPTED);
+}
+async function denyRequest(id: string) {
+    updateRequestStatus(id, RequestStatus.DENIED);
 }
 async function refreshCalendars() { }
 
 export default {
     user: {
         insertUser,
+        updateUserEmail,
         deleteUser,
     },
     request: {
@@ -114,6 +133,7 @@ export default {
         denyRequest,
     },
     calendar: {
+        findCalendarById,
         findCalendarsByEmail,
         insertCalendar,
         deleteCalendar,
