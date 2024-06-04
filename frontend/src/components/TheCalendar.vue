@@ -4,29 +4,41 @@ import {decodeCredential} from "vue3-google-login";
 export default {
   data() {
     const now = new Date()
-    const weekReferenceDate = new Date(now)
-    weekReferenceDate.setDate(now.getDate() - (now.getDay() || 7) + 1)
+    const current = new Date(now)
+    current.setDate(now.getDate() - (now.getDay() || 7) + 1)
     return {
       user: decodeCredential(this.$route.params.credential as string) as {aud: string, azp: string, email: string, email_verified: boolean, exp: number, given_name: string, iat: number, iss: string, jti: string, name: string, nbf: number, picture: string, sub: string},
-      weekdays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      weekReferenceDate: weekReferenceDate,
-      month: weekReferenceDate.toLocaleString('default', { month: 'long' }),
-      year: weekReferenceDate.getUTCFullYear()
+      daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      weekdays: [
+          new Date(current),
+          new Date(current.setDate(current.getDate() + 1)),
+          new Date(current.setDate(current.getDate() + 1)),
+          new Date(current.setDate(current.getDate() + 1)),
+          new Date(current.setDate(current.getDate() + 1)),
+          new Date(current.setDate(current.getDate() + 1)),
+          new Date(current.setDate(current.getDate() + 1))
+      ],
+      month: current.toLocaleString('default', { month: 'long' }),
+      year: current.getUTCFullYear()
     }
   },
   methods: {
     toggleCalendarLeft() {
-      this.weekReferenceDate.setDate(this.weekReferenceDate.getDate() - 7);
-      console.log(this.weekReferenceDate)
-      this.month = this.weekReferenceDate.toLocaleString('default', { month: 'long' })
-      this.year = this.weekReferenceDate.getUTCFullYear()
+      this.weekdays = this.weekdays.map(day => {
+        day.setDate(day.getDate() - 7)
+        return day
+      });
+      this.month = this.weekdays[0].toLocaleString('default', { month: 'long' })
+      this.year = this.weekdays[0].getUTCFullYear()
     },
 
     toggleCalendarRight() {
-      this.weekReferenceDate.setDate(this.weekReferenceDate.getDate() + 7);
-      console.log(this.weekReferenceDate)
-      this.month = this.weekReferenceDate.toLocaleString('default', { month: 'long' })
-      this.year = this.weekReferenceDate.getUTCFullYear()
+      this.weekdays = this.weekdays.map(day => {
+        day.setDate(day.getDate() + 7)
+        return day
+      });
+      this.month = this.weekdays[0].toLocaleString('default', { month: 'long' })
+      this.year = this.weekdays[0].getUTCFullYear()
     },
 
     logout() {
@@ -58,10 +70,10 @@ export default {
           {{ `${index - 1}`.padStart(2, '0')}}:00
         </div>
       </div>
-      <div class="calendar-day" v-for="weekday in weekdays" :key="weekday">
+      <div class="calendar-day" v-for="(weekday, idx) in weekdays" :key="weekday.getDay()">
         <div class="day-header">
-          {{ weekday }}
-          <div class="day-number"> 09 </div>
+          {{ daysOfWeek[idx] }}
+          <div class="day-number"> {{ weekdays[idx].getDate() }} </div>
         </div>
         <div class="day-body">
           <div class="day-hour" v-for="index in 24" :key="index">
