@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import {GoogleLogin} from "vue3-google-login";
+import {GoogleLogin, decodeCredential} from "vue3-google-login";
 import router from "@/router";
 
 function login(response: any) {
-  router.push('/calendar')
+  router.push(`calendar/${response.credential}`);
 }
 </script>
 <template>
   <div class="container">
     <h1>Book Ya Mate</h1>
     <div class="login-container">
-      <GoogleLogin :callback="login" auto-login prompt client-id="TODO.ENV.VARIABLE"/>
+      <GoogleLogin :callback="login" auto-login prompt/>
       <div style="padding: 32px 0;">
         <p>This site would have a lot of potential, but we only provide a sign in button which logs you in via Google.</p>
         <p>If you have money, we are willing to take it, and in favor we would put some advertisement here for you.</p>

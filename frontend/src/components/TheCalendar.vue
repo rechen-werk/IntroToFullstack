@@ -1,26 +1,36 @@
-<script setup lang="ts">
-defineProps<{
-  name: string,
-}>()
-const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-function toggleCalendarLeft() {
-  console.log(weekReferenceDate)
+<script lang="ts">
+import {decodeCredential} from "vue3-google-login";
+
+export default {
+  data() {
+    return {
+      user: decodeCredential(this.$route.params.credential as string) as {aud: string, azp: string, email: string, email_verified: boolean, exp: number, given_name: string, iat: number, iss: string, jti: string, name: string, nbf: number, picture: string, sub: string},
+      weekdays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      weekReferenceDate: new Date(),
+    }
+  },
+  methods: {
+    toggleCalendarLeft() {
+      console.log(this.weekReferenceDate)
+    },
+
+    toggleCalendarRight() {
+      console.log(this.weekReferenceDate)
+    },
+
+    logout() {
+
+    }
+
+  }
 }
 
-function toggleCalendarRight() {
-  console.log(weekReferenceDate)
-}
 
-function logout() {
-  console.log(weekReferenceDate)
-}
-let weekReferenceDate = new Date()
 </script>
-
 <template>
   <div class="calendar-container">
     <nav class="calendar-nav">
-      <div class="calendar-nav-left">{{ name }}</div>
+      <div class="calendar-nav-left">{{user.name}}</div>
       <div class="calendar-nav-center">
         <button @click="toggleCalendarLeft()"><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
         <div class="calendar-nav-date">June 2024</div>
@@ -48,7 +58,6 @@ let weekReferenceDate = new Date()
       </div>
     </div>
   </div>
-
 </template>
 
 <style scoped>

@@ -6,7 +6,7 @@ import TheCalendar from "@/components/TheCalendar.vue";
 <template>
   <main>
     <div class="calendar">
-      <TheCalendar name="Adrian Vinojcic"/>
+      <TheCalendar/>
     </div>
     <div class="sidebar">
       <TheSidebar/>
