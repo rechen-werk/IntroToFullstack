@@ -3,19 +3,30 @@ import {decodeCredential} from "vue3-google-login";
 
 export default {
   data() {
+    const now = new Date()
+    const weekReferenceDate = new Date(now)
+    weekReferenceDate.setDate(now.getDate() - (now.getDay() || 7) + 1)
     return {
       user: decodeCredential(this.$route.params.credential as string) as {aud: string, azp: string, email: string, email_verified: boolean, exp: number, given_name: string, iat: number, iss: string, jti: string, name: string, nbf: number, picture: string, sub: string},
       weekdays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      weekReferenceDate: new Date(),
+      weekReferenceDate: weekReferenceDate,
+      month: weekReferenceDate.toLocaleString('default', { month: 'long' }),
+      year: weekReferenceDate.getUTCFullYear()
     }
   },
   methods: {
     toggleCalendarLeft() {
+      this.weekReferenceDate.setDate(this.weekReferenceDate.getDate() - 7);
       console.log(this.weekReferenceDate)
+      this.month = this.weekReferenceDate.toLocaleString('default', { month: 'long' })
+      this.year = this.weekReferenceDate.getUTCFullYear()
     },
 
     toggleCalendarRight() {
+      this.weekReferenceDate.setDate(this.weekReferenceDate.getDate() + 7);
       console.log(this.weekReferenceDate)
+      this.month = this.weekReferenceDate.toLocaleString('default', { month: 'long' })
+      this.year = this.weekReferenceDate.getUTCFullYear()
     },
 
     logout() {
@@ -33,12 +44,12 @@ export default {
       <div class="calendar-nav-left">{{user.name}}</div>
       <div class="calendar-nav-center">
         <button @click="toggleCalendarLeft()"><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
-        <div class="calendar-nav-date">June 2024</div>
+        <div class="calendar-nav-date">{{ month }} {{ year }}</div>
         <button @click="toggleCalendarRight()"><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
       </div>
       <div class="calendar-nav-right">
         <button class="logout-button" @click="logout()">Log out</button>
-        <img :src="user.picture" alt="Your profile picture." class="profile-picture"/>
+        <img :src="user.picture" alt="Your profile picture." class="profile-picture" style="font-size: 10px"/>
       </div>
       </nav>
     <div class="calendar-body">
@@ -101,7 +112,7 @@ export default {
   }
 
   .calendar-nav-date {
-    width: 164px;
+    width: 204px;
     text-align: center;
     font-weight: bold;
   }
