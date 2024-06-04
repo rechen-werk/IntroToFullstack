@@ -38,6 +38,7 @@ export default {
       </div>
       <div class="calendar-nav-right">
         <button class="logout-button" @click="logout()">Log out</button>
+        <img :src="user.picture" alt="Your profile picture." class="profile-picture"/>
       </div>
       </nav>
     <div class="calendar-body">
@@ -107,6 +108,9 @@ export default {
 
   .calendar-nav-right {
     text-align: right;
+    vertical-align: center;
+
+    display: flex;
   }
   .calendar-nav > .calendar-nav-center > button {
     height: 48px;
@@ -123,7 +127,8 @@ export default {
     filter: invert(80%);
   }
   .logout-button {
-    padding: 10px 20px;
+    height: 48px;
+    padding: 0 28px;
     background-color: #f1c40f;
     color: black;
     border: none;
@@ -132,7 +137,11 @@ export default {
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-
+  .profile-picture{
+    width: 48px;
+    border-radius: 6px;
+    margin: 0 4px;
+  }
   .logout-button:hover {
     background-color: #f39c12;
   }
