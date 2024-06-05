@@ -1,6 +1,5 @@
 package-lock.json
 build/
-local/
 node_modules/
 *.iml
 .gitignore
