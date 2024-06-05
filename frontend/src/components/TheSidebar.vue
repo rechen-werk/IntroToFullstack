@@ -1,8 +1,21 @@
 <script setup lang="ts">
-
+import axios from "axios";
 import TheSearchResult from "@/components/TheSearchResult.vue";
 import type {User} from "@/model/User";
-const myUserList: User[] = [{id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}]
+import { ref } from "vue";
+
+var myUserList: User[] = ref();
+// [
+//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
+//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
+//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
+//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
+//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}
+// ];
+
+axios.get(`http://localhost:3000/api/users`).then((response) => {
+  myUserList.value = response.data;
+});
 </script>
 
 <template>

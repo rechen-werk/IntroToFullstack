@@ -3,18 +3,25 @@ import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+import cors from "cors";
 
 import userRouter from "./routes/users";
 import calendarRouter from "./routes/calendars";
 import requestsRouter from "./routes/requests";
 
 const app = express();
+const corsOptions = {
+  origin: "http://localhost:8000",
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "..", 'public')));
+app.use(cors(corsOptions));
 
 app.use('/api/users', userRouter);
 app.use('/api/calendars', calendarRouter);
@@ -35,5 +42,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+console.log("App running at http://localhost:3000/")
 
 export default app;

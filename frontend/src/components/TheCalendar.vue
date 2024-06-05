@@ -1,14 +1,26 @@
 <script lang="ts">
 import {decodeCredential, googleLogout} from "vue3-google-login";
 import router from "@/router";
+import axios from "axios";
 
 export default {
-  data() {
+  data: function() {
     const now = new Date()
     const current = new Date(now)
     current.setDate(now.getDate() - (now.getDay() || 7) + 1)
+
+    const user = decodeCredential(this.$route.params.credential as string) as {aud: string, azp: string, email: string, email_verified: boolean, exp: number, given_name: string, iat: number, iss: string, jti: string, name: string, nbf: number, picture: string, sub: string};
+    
+    axios.get("http://localhost:3000/api/users").then((response) => {
+      const emails = response.data.map((user: any) => user.email);
+      if (!emails.includes(user.email)) {
+        axios.put(`http://localhost:3000/api/users/new/${user.name}/${user.email}`);
+      }
+    });
+    
+
     return {
-      user: decodeCredential(this.$route.params.credential as string) as {aud: string, azp: string, email: string, email_verified: boolean, exp: number, given_name: string, iat: number, iss: string, jti: string, name: string, nbf: number, picture: string, sub: string},
+      user: user,
       daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       weekdays: [
           new Date(current),

@@ -1,5 +1,6 @@
 const CREATE_TABLE = {
     USER: `CREATE TABLE IF NOT EXISTS user(
+        name TEXT NOT NULL,
         email TEXT NOT NULL, 
         active INTEGER, 
         PRIMARY KEY (email) 
@@ -38,7 +39,7 @@ const CREATE_TABLE = {
 }
 
 const INSERT = {
-    USER: `REPLACE INTO user(email, active) VALUES (?,TRUE)`,
+    USER: `REPLACE INTO user(name, email, active) VALUES (?,?,TRUE)`,
     CALENDAR: `REPLACE INTO calendar(id, icsContent, email, active) VALUES (?,?,?,TRUE)`,
     REQUEST: `REPLACE INTO 
     request(id, fromEmail, toEmail, start, end, title, description, status, active) 
@@ -62,6 +63,9 @@ const UPDATE = {
 }
 
 const SELECT = {
+    USERS: `SELECT * FROM user WHERE active = TRUE`,
+    USER_BY_EMAIL: `SELECT * FROM user WHERE email = ? AND active = TRUE`,
+    USERS_OTHER_THAN: `SELECT * FROM user WHERE email != ? AND active = TRUE`,
     CALENDAR_BY_ID: `SELECT * FROM calendar WHERE id = ? AND active = TRUE`,
     CALENDAR_BY_EMAIL: `SELECT * FROM calendar WHERE email = ? AND active = TRUE`,
     REQUEST_BY_ID: `SELECT * FROM request WHERE id = ? AND active = TRUE`,

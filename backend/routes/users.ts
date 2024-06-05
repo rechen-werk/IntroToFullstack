@@ -4,11 +4,21 @@ import db from "../services/db";
 const router = express.Router();
 
 /* GET a list of all users with the given name. */
-// router.get('/by-name/:name', function(req, res,) {
-//   const userName: string = req.params.name
+router.get('/', async function(req, res,) {
 
-//   res.send(`search by name: ${userName}`);
-// });
+  const users = await db.user.allUsers();
+
+  res.json(users);
+});
+
+/* GET a list of all users other than the given email. */
+router.get('/otherthan/:mail', async function(req, res) {
+  const mail: string = req.params.mail;
+
+  const users = await db.user.allUsersOtherThan(mail);
+
+  res.json(users);
+});
 
 /* GET the user with the specified id. */
 // router.get('/by-id/:userId', function(req, res) {
@@ -19,7 +29,7 @@ const router = express.Router();
 
 /* DELETE sets the user with the given id to inactive. */
 router.delete('/:mail', async function(req, res) {
-  const userId: string = req.params.mail.toString();
+  const userId: string = req.params.mail as string;
 
   await db.user.deleteUser(userId);
 
@@ -27,19 +37,20 @@ router.delete('/:mail', async function(req, res) {
 });
 
 /* PUT updates the mail for the user with this id. */
-router.put('/:mail', async function(req, res) {
-  const mail: string = req.params.mail.toString();
+router.put('/new/:name/:email', async function(req, res) {
+  const name: string = req.params.name;
+  const mail: string = req.params.email;
 
-  await db.user.insertUser(mail);
+  await db.user.insertUser(name, mail);
 
-  res.send({ mail })
+  res.json({ name, mail })
 });
 
 // TODO: constraints!
 /* POST updates the mail for the user with this old mail. */
 router.post('/mail/:oldMail/:newMail', async function(req, res) {
-  const oldMail: string = req.params.oldMail.toString();
-  const newMail: string = req.params.newMail.toString();
+  const oldMail: string = req.params.oldMail as string;
+  const newMail: string = req.params.newMail as string;
 
   await db.user.updateUserEmail(oldMail, newMail);
 

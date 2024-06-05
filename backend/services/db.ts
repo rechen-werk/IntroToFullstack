@@ -31,6 +31,30 @@ function loadTables() {
 }
 
 // --- SEARCH ---
+async function allUsers(): Promise<[]> {
+    return new Promise((resolve, reject) => {
+        db.all(queries.SELECT.USERS, (error: Error, rows: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(rows.map((row: any) => row));
+            }
+        });
+    });
+}
+
+async function allUsersOtherThan(email: string): Promise<[]> {
+    return new Promise((resolve, reject) => {
+        db.all(queries.SELECT.USERS_OTHER_THAN, [email], (error: Error, rows: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(rows.map((row: any) => row));
+            }
+        });
+    });
+}
+
 function queryRequests(query: string, email: string): Promise<[CalendarRequest]> { 
     return new Promise((resolve, reject) => {
         db.all(query, [email], (error: Error, rows: any) => {
@@ -73,9 +97,9 @@ async function findCalendarById(id: string): Promise<Calendar> {
 
 
 // --- INSERT ---
-async function insertUser(email: string) {
+async function insertUser(name: string, email: string) {
     console.log(`Creating new user: ${email}!`);
-    db.run(queries.INSERT.USER, email);
+    db.run(queries.INSERT.USER, name, email);
  }
 async function insertCalendar(calendar: Calendar) {
     console.log(`Creating new calendar: ${calendar.id}, ${calendar.email}!`);
@@ -120,6 +144,8 @@ async function refreshCalendars() { }
 
 export default {
     user: {
+        allUsers,
+        allUsersOtherThan,
         insertUser,
         updateUserEmail,
         deleteUser,
