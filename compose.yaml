@@ -2,15 +2,17 @@ services:
   backend:
     build:
       context: ./backend
-    command: npm run start-backend
+    command: npm run start
     develop:
       watch:
-        - action: sync+restart
+        - action: rebuild
           path: ./backend/
           target: /home/big-brains/app
           ignore:
             - ./backend/node_modules/
     container_name: app-backend
+    ports: 
+      - "8080:8080"
   frontend:
     build:
       context: ./frontend
