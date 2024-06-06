@@ -17,7 +17,8 @@ export default {
   },
   methods: {
     search() {
-      this.displayUserList = this.userList.filter(u => this.user.email != u.email && u.name.toLowerCase().includes(this.searchQueryString.toLowerCase()));
+      const query = this.searchQueryString.toLowerCase()
+      this.displayUserList = this.userList.filter(u => this.user.email != u.email && (u.name.toLowerCase().includes(query) || u.email.toLowerCase().includes(query)));
     }
   },
   async created() {
@@ -33,7 +34,7 @@ export default {
   <div class="sidebar-container">
     <div class="search">
       <div class="form">
-        <input type="text" v-model="searchQueryString" placeholder="Search for friends...">
+        <input type="text" v-model="searchQueryString" v-on:keyup.enter="search" placeholder="Search for friends...">
         <button type="submit" value="" @click="search"><img src="/src/icons/search-line-icon.png"></button>
       </div>
       <div class="search-results">
