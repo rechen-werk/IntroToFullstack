@@ -1,7 +1,7 @@
 import { Database, OPEN_READWRITE, OPEN_CREATE } from "sqlite3";
 import queries from "./dbQueries";
 import fs from 'fs';
-import { Calendar, CalendarRequest, RequestStatus } from "../utils/types";
+import { User, Calendar, CalendarRequest, RequestStatus } from "../utils/types";
 
 const DIR = './local';
 const DB_NAME = 'bookYaMate.db';
@@ -34,6 +34,18 @@ function loadTables() {
 async function allUsers(): Promise<[]> {
     return new Promise((resolve, reject) => {
         db.all(queries.SELECT.USERS, (error: Error, rows: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(rows.map((row: any) => row));
+            }
+        });
+    });
+}
+
+async function user(email: string): Promise<User> {
+    return new Promise((resolve, reject) => {
+        db.all(queries.SELECT.USER_BY_EMAIL, [email],(error: Error, rows: any) => {
             if (error) {
                 reject(error);
             } else {
@@ -145,6 +157,7 @@ async function refreshCalendars() { }
 export default {
     user: {
         allUsers,
+        user,
         allUsersOtherThan,
         insertUser,
         updateUserEmail,

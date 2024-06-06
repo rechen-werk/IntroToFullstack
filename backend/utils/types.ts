@@ -1,3 +1,12 @@
+class User {
+    name: string;
+    email: string;
+
+    constructor(name: string, email: string) {
+        this.name = name;
+        this.email = email;
+    }
+}
 class Calendar {
     id: string;
     icsContent: string;
@@ -42,4 +51,4 @@ enum RequestStatus {
     DENIED,
 }
 
-export { Calendar, CalendarRequest, RequestStatus };
+export { User, Calendar, CalendarRequest, RequestStatus };

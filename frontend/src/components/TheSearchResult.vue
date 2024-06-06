@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import type {User} from "@/model/User";
-defineProps<{
+const props = defineProps<{
   user: User,
 }>()
+const emit = defineEmits(['setView'])
+function view() {
+  emit('setView', props.user.email);
+}
 </script>
 
 <template>
   <div class="card">
-    <button class="card-button" title="View Calendar">
+    <button class="card-button" title="View Calendar" @click="view">
       <img src="/src/icons/binoculars-icon.png" alt="View Calendar of {{user.name}}">
     </button>
     <div class="card-text">
-      <h1 title="Write an email"><a :href="'mailto:' + user.email">{{ user.name }}</a></h1>
+      <h1 title="Write an email"><a :href="`mailto:${user.email}`">{{ user.name }}</a></h1>
     </div>
   </div>
 </template>

@@ -4,15 +4,18 @@ import router from "@/router";
 import axios from "axios";
 import {inject} from "vue";
 import type {VueCookies} from "vue-cookies";
+import TheSearchResult from "@/components/TheSearchResult.vue";
+import type {User} from "@/model/User";
 
 export default {
+  components: {TheSearchResult},
   data: function() {
     const now = new Date()
     const current = new Date(now)
     current.setDate(now.getDate() - (now.getDay() || 7) + 1)
 
     const user = decodeCredential(this.$route.params.credential as string) as {aud: string, azp: string, email: string, email_verified: boolean, exp: number, given_name: string, iat: number, iss: string, jti: string, name: string, nbf: number, picture: string, sub: string};
-    
+
     axios.get("http://localhost:3000/api/users").then((response) => {
       const emails = response.data.map((user: any) => user.email);
       if (!emails.includes(user.email)) {
@@ -38,8 +41,19 @@ export default {
       $cookies: inject<VueCookies>("$cookies"),
 
       calendarOwnerEmail: user.email,
-      calendarOwnerName: user.name
+      calendarOwnerName: user.name,
+
+
+      searchQueryString: "",
+      userList: [] as User[],
+      displayUserList: [] as User[]
     }
+  },
+  async created() {
+    axios.get(`http://localhost:3000/api/users`).then((response) => {
+      this.userList.push(...response.data);
+      this.displayUserList = this.userList.filter(u => this.user.email != u.email);
+    });
   },
   methods: {
     toggleCalendarLeft() {
@@ -64,54 +78,100 @@ export default {
       this.$cookies.remove("book-ya-mate-token")
       googleLogout();
       router.push(`/`);
-    }
+    },
+    view(email: string) {
+      axios.get(`http://localhost:3000/api/users/${email}`).then((response) => {
+        const user = response.data[0];
+        this.calendarOwnerEmail = user.email;
+        this.calendarOwnerName = user.name;
+      })
 
+    },
+    search() {
+      const query = this.searchQueryString.toLowerCase()
+      this.displayUserList = this.userList.filter(u => this.user.email != u.email && (u.name.toLowerCase().includes(query) || u.email.toLowerCase().split("@")[0].includes(query)));
+    }
   }
 }
 
 </script>
 <template>
-  <div class="calendar-container">
-    <nav class="calendar-nav">
-      <div class="calendar-nav-left">
-        <button class="username-button">{{user.name}} </button>
-        <span class="viewing-span">viewing </span>
-        <span class="viewed-user">{{calendarOwnerName}}</span>
-      </div>
-      <div class="calendar-nav-center">
-        <button @click="toggleCalendarLeft()"><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
-        <div class="calendar-nav-date">{{ month }} {{ year }}</div>
-        <button @click="toggleCalendarRight()"><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
-      </div>
-      <div class="calendar-nav-right">
-        <button class="logout-button" @click="logout()">Log out</button>
-        <img :src="user.picture" alt="Your profile picture." class="profile-picture" style="font-size: 10px"/>
-      </div>
-      </nav>
-    <div class="calendar-body">
-      <div class="calendar-timeline">
-        <div class="timeline-hour" v-for="index in 24" :key="index">
-          {{ `${index - 1}`.padStart(2, '0')}}:00
-        </div>
-      </div>
-      <div class="calendar-day" v-for="(weekday, idx) in weekdays" :key="weekday.getDay()">
-        <div class="day-header">
-          {{ daysOfWeek[idx] }}
-          <div class="day-number"> {{ weekdays[idx].getDate() }} </div>
-        </div>
-        <div class="day-body">
-          <div class="day-hour" v-for="index in 24" :key="index">
+  <main>
+    <div class="calendar">
+      <div class="calendar-container">
+        <nav class="calendar-nav">
+          <div class="calendar-nav-left">
+            <button class="username-button" @click="view(user.email)" title="View your own calendar">{{user.name}} </button>
+            <span class="viewing-span">viewing </span>
+            <span class="viewed-user" v-if="calendarOwnerEmail !== user.email">{{calendarOwnerName}}</span>
+            <span class="viewed-user" v-else>myself</span>
+          </div>
+          <div class="calendar-nav-center">
+            <button @click="toggleCalendarLeft()"><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
+            <div class="calendar-nav-date">{{ month }} {{ year }}</div>
+            <button @click="toggleCalendarRight()"><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
+          </div>
+          <div class="calendar-nav-right">
+            <button class="logout-button" @click="logout()">Log out</button>
+            <img :src="user.picture" alt="Your profile picture." class="profile-picture" style="font-size: 10px"/>
+          </div>
+        </nav>
+        <div class="calendar-body">
+          <div class="calendar-timeline">
+            <div class="timeline-hour" v-for="index in 24" :key="index">
+              {{ `${index - 1}`.padStart(2, '0')}}:00
+            </div>
+          </div>
+          <div class="calendar-day" v-for="(weekday, idx) in weekdays" :key="weekday.getDay()">
+            <div class="day-header">
+              {{ daysOfWeek[idx] }}
+              <div class="day-number"> {{ weekdays[idx].getDate() }} </div>
+            </div>
+            <div class="day-body">
+              <div class="day-hour" v-for="index in 24" :key="index">
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+    <div class="sidebar">
+      <div class="sidebar-container">
+        <div class="search">
+          <div class="form">
+            <input type="text" v-model="searchQueryString" v-on:keyup.enter="search" placeholder="Search for friends...">
+            <button type="submit" value="" @click="search"><img src="/src/icons/search-line-icon.png"></button>
+          </div>
+          <div class="search-results">
+            <TheSearchResult v-for="user in displayUserList" :user=user @setView="view"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </template>
 
 <style scoped>
-  * {
+  main {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  main .calendar {
+    height: 100%;
+    flex: 82
+  }
+  .calendar * {
     user-select: none;
   }
+
+  main .sidebar {
+    height: 100%;
+    flex: 18
+  }
+
   .calendar-container {
     flex: 1;
     display: inline-block;
@@ -145,6 +205,7 @@ export default {
     color: #f1c40f;
     border: none;
     font-size: 24px;
+    cursor: pointer;
   }
 
   .viewing-span {
@@ -257,5 +318,28 @@ export default {
     width: 100%;
     text-align: end;
     margin-right: 8px;
+  }
+
+  .sidebar-container {
+    background-color: #efefef;
+    height: 100%;
+  }
+  .search > .form {
+    margin: 12px;
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+  }
+  .search > .form > input {
+    flex: 9;
+  }
+  .search > .form > button {
+    flex: 1;
+    background-color: yellow;
+    cursor: pointer;
+  }
+  .search > .form > button > img{
+    width: 100%;
+    padding: 15%;
   }
 </style>

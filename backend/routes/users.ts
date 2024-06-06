@@ -11,6 +11,16 @@ router.get('/', async function(req, res,) {
   res.json(users);
 });
 
+/* GET a list of all users with the given name. */
+router.get('/:mail', async function(req, res,) {
+
+  const mail: string = req.params.mail;
+
+  const user = await db.user.user(mail);
+
+  res.json(user);
+});
+
 /* GET a list of all users other than the given email. */
 router.get('/otherthan/:mail', async function(req, res) {
   const mail: string = req.params.mail;
