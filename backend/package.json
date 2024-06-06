@@ -15,7 +15,8 @@
     "express": "~4.19.2",
     "http-errors": "~1.6.3",
     "morgan": "^1.10.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "vue-cookies": "^1.8.4"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",

@@ -1,21 +1,21 @@
-<script setup lang="ts">
+<script lang="ts">
 import axios from "axios";
 import TheSearchResult from "@/components/TheSearchResult.vue";
 import type {User} from "@/model/User";
-import { ref } from "vue";
 
-var myUserList: User[] = ref();
-// [
-//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
-//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
-//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
-//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}, 
-//   {id: "1234", name: "Hans", email: "hans@gmail.com", active: true}
-// ];
-
-axios.get(`http://localhost:3000/api/users`).then((response) => {
-  myUserList.value = response.data;
-});
+export default {
+  components: {TheSearchResult},
+  data() {
+    return {
+      userList: [] as User[]
+    }
+  },
+  async created() {
+    axios.get(`http://localhost:3000/api/users`).then((response) => {
+      this.userList.push(...response.data);
+    });
+  }
+}
 </script>
 
 <template>
@@ -23,10 +23,10 @@ axios.get(`http://localhost:3000/api/users`).then((response) => {
     <div class="search">
       <form>
         <input type="text" placeholder="Search for friends...">
-        <button type="submit" value=""><img src="/src/icons/search-line-icon.png"></img></button>
+        <button type="submit" value=""><img src="/src/icons/search-line-icon.png"></button>
       </form>
       <div class="search-results">
-        <TheSearchResult v-for="user in myUserList" :user=user />
+        <TheSearchResult v-for="user in userList" :user=user />
       </div>
     </div>
   </div>

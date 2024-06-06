@@ -2,6 +2,8 @@
 import {decodeCredential, googleLogout} from "vue3-google-login";
 import router from "@/router";
 import axios from "axios";
+import {inject} from "vue";
+import type {VueCookies} from "vue-cookies";
 
 export default {
   data: function() {
@@ -32,7 +34,9 @@ export default {
           new Date(current.setDate(current.getDate() + 1))
       ],
       month: current.toLocaleString('default', { month: 'long' }),
-      year: current.getUTCFullYear()
+      year: current.getUTCFullYear(),
+
+      $cookies: inject<VueCookies>("$cookies")
     }
   },
   methods: {
@@ -55,6 +59,7 @@ export default {
     },
 
     logout() {
+      this.$cookies.remove("book-ya-mate-token")
       googleLogout();
       router.push(`/`);
     }

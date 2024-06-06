@@ -1,10 +1,25 @@
-<script setup lang="ts">
-import {GoogleLogin, decodeCredential} from "vue3-google-login";
+<script lang="ts">
+import {GoogleLogin} from "vue3-google-login";
 import router from "@/router";
+import {inject} from "vue";
+import type {VueCookies} from "vue-cookies";
 
-function login(response: any) {
-  router.push(`calendar/${response.credential}`);
+export default {
+  components: {GoogleLogin},
+  data() {
+    return {
+      $cookies: inject<VueCookies>("$cookies")
+    }
+  },
+  methods: {
+    login(response: any) {
+      router.push(`calendar/${response.credential}`);
+      this.$cookies.set("book-ya-mate-token", response.credential, "1h");
+    }
+  }
 }
+
+
 </script>
 <template>
   <div class="container">

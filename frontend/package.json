@@ -16,6 +16,7 @@
     "axios": "^1.7.2",
     "gapi-script": "^1.2.0",
     "vue": "^3.4.21",
+    "vue-cookies": "^1.8.4",
     "vue-router": "^4.3.2",
     "vue3-google-login": "^2.0.26"
   },

@@ -1,6 +1,9 @@
-<script setup lang="ts">
+<script lang="ts">
 import TheSidebar from "@/components/TheSidebar.vue";
 import TheCalendar from "@/components/TheCalendar.vue";
+export default {
+  components: {TheCalendar, TheSidebar},
+}
 </script>
 
 <template>
