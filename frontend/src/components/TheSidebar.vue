@@ -18,7 +18,7 @@ export default {
   methods: {
     search() {
       const query = this.searchQueryString.toLowerCase()
-      this.displayUserList = this.userList.filter(u => this.user.email != u.email && (u.name.toLowerCase().includes(query) || u.email.toLowerCase().includes(query)));
+      this.displayUserList = this.userList.filter(u => this.user.email != u.email && (u.name.toLowerCase().includes(query) || u.email.toLowerCase().split("@")[0].includes(query)));
     }
   },
   async created() {
@@ -61,6 +61,7 @@ export default {
   .search > .form > button {
     flex: 1;
     background-color: yellow;
+    cursor: pointer;
   }
   .search > .form > button > img{
     width: 100%;

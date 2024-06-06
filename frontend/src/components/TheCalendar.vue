@@ -19,7 +19,6 @@ export default {
         axios.put(`http://localhost:3000/api/users/new/${user.name}/${user.email}`);
       }
     });
-    
 
     return {
       user: user,
@@ -36,7 +35,10 @@ export default {
       month: current.toLocaleString('default', { month: 'long' }),
       year: current.getUTCFullYear(),
 
-      $cookies: inject<VueCookies>("$cookies")
+      $cookies: inject<VueCookies>("$cookies"),
+
+      calendarOwnerEmail: user.email,
+      calendarOwnerName: user.name
     }
   },
   methods: {
@@ -71,7 +73,11 @@ export default {
 <template>
   <div class="calendar-container">
     <nav class="calendar-nav">
-      <div class="calendar-nav-left">{{user.name}}</div>
+      <div class="calendar-nav-left">
+        <button class="username-button">{{user.name}} </button>
+        <span class="viewing-span">viewing </span>
+        <span class="viewed-user">{{calendarOwnerName}}</span>
+      </div>
       <div class="calendar-nav-center">
         <button @click="toggleCalendarLeft()"><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
         <div class="calendar-nav-date">{{ month }} {{ year }}</div>
@@ -133,6 +139,20 @@ export default {
 
   .calendar-nav-left {
     text-align: left;
+  }
+  .username-button {
+    background-color: transparent;
+    color: #f1c40f;
+    border: none;
+    font-size: 24px;
+  }
+
+  .viewing-span {
+    font-size: small;
+  }
+
+  .viewed-user {
+    font-size: smaller;
   }
 
   .calendar-nav-center {
