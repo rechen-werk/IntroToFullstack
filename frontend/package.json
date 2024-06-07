@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^1.7.2",
     "gapi-script": "^1.2.0",
+    "ical": "^0.8.0",
     "vue": "^3.4.21",
     "vue-cookies": "^1.8.4",
     "vue-router": "^4.3.2",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
+    "@types/ical": "^0.8.3",
     "@types/node": "^20.12.5",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-prettier": "^9.0.0",

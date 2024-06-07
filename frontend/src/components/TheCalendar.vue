@@ -6,15 +6,30 @@ import {inject} from "vue";
 import type {VueCookies} from "vue-cookies";
 import TheSearchResult from "@/components/TheSearchResult.vue";
 import type {User} from "@/model/User";
+import ical, {type CalendarComponent, type FullCalendar} from 'ical'
 
 export default {
   components: {TheSearchResult},
-  data: function() {
+  data: function () {
     const now = new Date()
     const current = new Date(now)
     current.setDate(now.getDate() - (now.getDay() || 7) + 1)
 
-    const user = decodeCredential(this.$route.params.credential as string) as {aud: string, azp: string, email: string, email_verified: boolean, exp: number, given_name: string, iat: number, iss: string, jti: string, name: string, nbf: number, picture: string, sub: string};
+    const user = decodeCredential(this.$route.params.credential as string) as {
+      aud: string,
+      azp: string,
+      email: string,
+      email_verified: boolean,
+      exp: number,
+      given_name: string,
+      iat: number,
+      iss: string,
+      jti: string,
+      name: string,
+      nbf: number,
+      picture: string,
+      sub: string
+    };
 
     axios.get("http://localhost:3000/api/users").then((response) => {
       const emails = response.data.map((user: any) => user.email);
@@ -23,32 +38,47 @@ export default {
       }
     });
 
-    let ics = ""
-    axios.get(`http://localhost:3000/api/calendars/ics/${user.email}`).then((response) => {
-      ics = response.data
-    })
 
     return {
       user: user,
       daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       weekdays: [
-          new Date(current),
-          new Date(current.setDate(current.getDate() + 1)),
-          new Date(current.setDate(current.getDate() + 1)),
-          new Date(current.setDate(current.getDate() + 1)),
-          new Date(current.setDate(current.getDate() + 1)),
-          new Date(current.setDate(current.getDate() + 1)),
-          new Date(current.setDate(current.getDate() + 1))
+        {
+          date: new Date(current),
+          content: [] as CalendarComponent[]},
+        {
+          date: new Date(current.setDate(current.getDate() + 1)),
+          content: [] as CalendarComponent[]
+        },
+        {
+          date: new Date(current.setDate(current.getDate() + 1)),
+          content: [] as CalendarComponent[]
+        },
+        {
+          date: new Date(current.setDate(current.getDate() + 1)),
+          content: [] as CalendarComponent[]
+        },
+        {
+          date: new Date(current.setDate(current.getDate() + 1)),
+          content: [] as CalendarComponent[]
+        },
+        {
+          date: new Date(current.setDate(current.getDate() + 1)),
+          content: [] as CalendarComponent[]
+        },
+        {
+          date: new Date(current.setDate(current.getDate() + 1)),
+          content: [] as CalendarComponent[]
+        }
       ],
-      month: current.toLocaleString('default', { month: 'long' }),
+      month: current.toLocaleString('default', {month: 'long'}),
       year: current.getUTCFullYear(),
 
       $cookies: inject<VueCookies>("$cookies"),
 
       calendarEmail: user.email,
       calendarName: user.name,
-      calendarContent: ics,
-
+      calendarContent: {} as FullCalendar,
 
       searchQueryString: "",
       userList: [] as User[],
@@ -60,24 +90,41 @@ export default {
       this.userList.push(...response.data);
       this.displayUserList = this.userList.filter(u => this.user.email != u.email);
     });
+    axios.get(`http://localhost:3000/api/calendars/ics/${this.user.email}`).then((response) => {
+      this.calendarContent = ical.parseICS(response.data);
+    });
   },
   methods: {
-    toggleCalendarLeft() {
+    toggleCalendar(days: number) {
+      const isToday = function (date: Date, component: CalendarComponent): boolean {
+        const start = component.start;
+        const end = component.end;
+        if(start && end) {
+          const startIsToday =
+              start.getFullYear() === date.getFullYear() &&
+              start.getMonth() === date.getMonth() &&
+              start.getDate() === date.getDate();
+          const endIsToday =
+              end.getFullYear() === date.getFullYear() &&
+              end.getMonth() === date.getMonth() &&
+              end.getDate() === date.getDate();
+          return startIsToday && endIsToday;
+        } else return false;
+      }
       this.weekdays = this.weekdays.map(day => {
-        day.setDate(day.getDate() - 7)
+        day.date.setDate(day.date.getDate() + days)
+        day.content = Object.values(this.calendarContent).filter(c => isToday(day.date, c));
         return day
       });
-      this.month = this.weekdays[0].toLocaleString('default', { month: 'long' })
-      this.year = this.weekdays[0].getUTCFullYear()
+      this.month = this.weekdays[0].date.toLocaleString('default', { month: 'long' })
+      this.year = this.weekdays[0].date.getUTCFullYear()
+    },
+    toggleCalendarLeft() {
+      this.toggleCalendar(-7)
     },
 
     toggleCalendarRight() {
-      this.weekdays = this.weekdays.map(day => {
-        day.setDate(day.getDate() + 7)
-        return day
-      });
-      this.month = this.weekdays[0].toLocaleString('default', { month: 'long' })
-      this.year = this.weekdays[0].getUTCFullYear()
+      this.toggleCalendar(7)
     },
 
     logout() {
@@ -128,10 +175,10 @@ export default {
               {{ `${index - 1}`.padStart(2, '0')}}:00
             </div>
           </div>
-          <div class="calendar-day" v-for="(weekday, idx) in weekdays" :key="weekday.getDay()">
+          <div class="calendar-day" v-for="(weekday, idx) in weekdays" :key="weekday.date.getDay()">
             <div class="day-header">
               {{ daysOfWeek[idx] }}
-              <div class="day-number"> {{ weekdays[idx].getDate() }} </div>
+              <div class="day-number"> {{ weekdays[idx].date.getDate() }} </div>
             </div>
             <div class="day-body">
               <div class="day-hour" v-for="index in 24" :key="index">
