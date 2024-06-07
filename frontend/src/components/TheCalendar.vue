@@ -9,6 +9,22 @@ import type {User} from "@/model/User";
 import ical, {type CalendarComponent, type FullCalendar} from 'ical'
 import CalendarEntry from "@/components/CalendarEntry.vue";
 
+window.onclick = function(event) {
+  if (!event.target.matches('.profile-picture')) {
+    const dropdowns = document.getElementsByClassName("dropdown");
+    let i;
+    for (i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+  if(event.target.matches('.modal')) {
+    document.getElementById("request-modal").classList.remove("show-modal");
+  }
+}
+
 export default {
   components: {CalendarEntry, TheSearchResult},
   data: function () {
@@ -76,7 +92,12 @@ export default {
       searchQueryString: "",
       userList: [] as User[],
       displayUserList: [] as User[],
-      ws: null as WebSocket | null
+      ws: null as WebSocket | null,
+
+      // request form
+      fromTime: null as Date | null,
+      toTime: null as Date | null,
+      title: ""
     }
   },
   async created() {
@@ -126,12 +147,42 @@ export default {
     toggleCalendarRight() {
       this.toggleCalendar(7)
     },
-
+    toggleDropdown() {
+      document.getElementById("user-options").classList.toggle("show");
+    },
     logout() {
       this.$cookies.remove("book-ya-mate-token")
       googleLogout();
       this.ws?.close();
       router.push(`/`);
+    },
+    showModal() {
+      document.getElementById("request-modal").classList.add("show-modal");
+    },
+    hideModal() {
+      document.getElementById("request-modal").classList.remove("show-modal");
+    },
+    sendRequest() {
+      axios.post("http://localhost:3000/api/requests", {params:
+            {
+              fromEmail: this.user.email,
+              toEmail: this.calendarEmail,
+              from: this.fromTime,
+              to: this.toTime,
+              title: this.title
+            }
+      }).then((response) => {
+        console.log(response.data)
+        this.from = null;
+        this.to = null;
+        this.title = "";
+      })
+    },
+    donate() {
+      if(Math.random() > 0.5)
+        window.location = "https://ko-fi.com/rechenwerk"
+      else
+        window.location = "https://ko-fi.com/biogustav";
     },
     view(email: string) {
       axios.get(`http://localhost:3000/api/users/${email}`).then((response) => {
@@ -178,14 +229,30 @@ export default {
 </script>
 <template>
   <main>
+    <div id="request-modal" class="modal">
+      <div class="modal-content" @submit.prevent="sendRequest">
+        <form method="post" action="http://localhost:3000/api/requests/" >
+          <label for="modal-start-time">From:</label>
+          <input id="modal-start-time" type="datetime-local" v-model="fromTime"/>
+          <label for="modal-end-time">To:</label>
+          <input id="modal-end-time" type="datetime-local" v-model="toTime"/>
+          <label for="modal-text-input">Summary</label>
+          <input id="modal-text-input" type="text" :placeholder="'Your plans with' + calendarName + '...'" v-model="title"/>
+          <button type="submit">Request</button>
+        </form>
+        <button @click="hideModal">Cancel</button>
+      </div>
+    </div>
     <div class="calendar">
       <div class="calendar-container">
         <nav class="calendar-nav">
           <div class="calendar-nav-left">
             <button class="username-button" @click="view(user.email)" title="View your own calendar">{{user.name}} </button>
-            <span class="viewing-span">viewing </span>
-            <span class="viewed-user" v-if="calendarEmail !== user.email">{{ calendarName }}</span>
-            <span class="viewed-user" v-else>myself</span>
+            <div class="view-div">
+              <span class="viewing-span">viewing </span>
+              <span class="viewed-user" v-if="calendarEmail !== user.email">{{ calendarName }}</span>
+              <span class="viewed-user" v-else>myself</span>
+            </div>
           </div>
           <div class="calendar-nav-center">
             <button @click="toggleCalendarLeft()"><img src="/src/icons/line-angle-left-icon.png" alt="Go to previous week." title="Previous week"></button>
@@ -193,8 +260,13 @@ export default {
             <button @click="toggleCalendarRight()"><img src="/src/icons/line-angle-right-icon.png" alt="Go to next week." title="Next week"></button>
           </div>
           <div class="calendar-nav-right">
-            <button class="logout-button" @click="logout()">Log out</button>
-            <img :src="user.picture" alt="Your profile picture." class="profile-picture" style="font-size: 10px"/>
+            <button class="profile-picture-button" @click="toggleDropdown"><img :src="user.picture" alt="Your profile picture." class="profile-picture" style="font-size: 10px"/></button>
+            <div id="user-options" class="dropdown">
+              <button v-if="user.email !== calendarEmail" @click="showModal()">Request Time</button>
+              <button v-else @click="showModal()">Reserve Time</button>
+              <button @click="logout()">Log out</button>
+              <button @click="donate()">Donate</button>
+            </div>
           </div>
         </nav>
         <div class="calendar-body">
@@ -261,7 +333,7 @@ export default {
     width: 100%;
   }
   .calendar-nav {
-    height: 64px;
+    height: fit-content;
     width: 100%;
     background-color: black;
     color: #f1c40f;
@@ -271,7 +343,7 @@ export default {
 
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 5;
     flex-grow: 1;
     justify-content: space-between;
     padding: 8px;
@@ -282,6 +354,7 @@ export default {
     text-align: left;
   }
   .username-button {
+    padding: 0;
     background-color: transparent;
     color: #f1c40f;
     border: none;
@@ -289,12 +362,16 @@ export default {
     cursor: pointer;
   }
 
+  .view-div {
+    height: 28px;
+  }
+
   .viewing-span {
     font-size: small;
   }
 
   .viewed-user {
-    font-size: smaller;
+    font-size: medium;
   }
 
   .calendar-nav-center {
@@ -310,14 +387,42 @@ export default {
   }
 
   .calendar-nav-right {
-    text-align: right;
     vertical-align: center;
-
-    display: flex;
+    position: relative;
+    display: inline-block;
   }
+
+  .dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    transform: translateY(-8px);
+    background-color: #646464;
+    min-width: 160px;
+    z-index: 1;
+  }
+
+  .dropdown > button {
+    padding: 8px 20px;
+    border: none;
+    background-color: #181818;
+    color: #f1c40f;
+    border-bottom: 1px solid white;
+  }
+
+  .dropdown > button:hover {
+    background-color: #484848;
+  }
+
+  .show {
+    display: flex;
+    flex-direction: column;
+  }
+
   .calendar-nav > .calendar-nav-center > button {
     height: 48px;
     width: 48px;
+    margin: auto 0;
     background: none;
     border: none;
   }
@@ -329,24 +434,17 @@ export default {
     width: 100%;
     filter: invert(80%);
   }
-  .logout-button {
+  .profile-picture-button {
     height: 48px;
-    padding: 0 28px;
-    background-color: #f1c40f;
-    color: black;
+    padding: 0;
+    border-radius: 6px;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
   }
   .profile-picture{
-    width: 48px;
+    height: 100%;
+    margin: 0;
     border-radius: 6px;
-    margin: 0 4px;
-  }
-  .logout-button:hover {
-    background-color: #f39c12;
   }
   .calendar-body {
     block-size: fit-content;
@@ -402,6 +500,26 @@ export default {
     width: 100%;
     text-align: end;
     margin-right: 8px;
+  }
+
+  .modal {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(73, 73, 73, 0.58);
+    position: absolute;
+    z-index: 10;
+
+    justify-content: center;
+    align-items: center;
+  }
+  .show-modal {
+    display: flex;
+  }
+  .modal-content {
+    width: 660px;
+    height: 840px;
+    background-color: white;
   }
 
   .sidebar-container {
