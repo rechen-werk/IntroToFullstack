@@ -23,6 +23,11 @@ export default {
       }
     });
 
+    let ics = ""
+    axios.get(`http://localhost:3000/api/calendars/ics/${user.email}`).then((response) => {
+      ics = response.data
+    })
+
     return {
       user: user,
       daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -40,8 +45,9 @@ export default {
 
       $cookies: inject<VueCookies>("$cookies"),
 
-      calendarOwnerEmail: user.email,
-      calendarOwnerName: user.name,
+      calendarEmail: user.email,
+      calendarName: user.name,
+      calendarContent: ics,
 
 
       searchQueryString: "",
@@ -82,8 +88,8 @@ export default {
     view(email: string) {
       axios.get(`http://localhost:3000/api/users/${email}`).then((response) => {
         const user = response.data[0];
-        this.calendarOwnerEmail = user.email;
-        this.calendarOwnerName = user.name;
+        this.calendarEmail = user.email;
+        this.calendarName = user.name;
       })
 
     },
@@ -103,7 +109,7 @@ export default {
           <div class="calendar-nav-left">
             <button class="username-button" @click="view(user.email)" title="View your own calendar">{{user.name}} </button>
             <span class="viewing-span">viewing </span>
-            <span class="viewed-user" v-if="calendarOwnerEmail !== user.email">{{calendarOwnerName}}</span>
+            <span class="viewed-user" v-if="calendarEmail !== user.email">{{ calendarName }}</span>
             <span class="viewed-user" v-else>myself</span>
           </div>
           <div class="calendar-nav-center">
@@ -135,7 +141,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="sidebar">
+    <aside>
       <div class="sidebar-container">
         <div class="search">
           <div class="form">
@@ -147,7 +153,7 @@ export default {
           </div>
         </div>
       </div>
-    </div>
+    </aside>
   </main>
 </template>
 
@@ -167,7 +173,7 @@ export default {
     user-select: none;
   }
 
-  main .sidebar {
+  main aside {
     height: 100%;
     flex: 18
   }
