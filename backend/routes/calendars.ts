@@ -1,27 +1,39 @@
 import express from "express";
 import db from "../services/db";
 import { Calendar } from "../utils/types";
+import { writeDelta } from "../utils/icsprocessing";
 
 const router = express.Router();
 
-/* GET the ics-file for the calendar with given id. */
+/* GET the ics-file for the calendar with given email. */
 router.get('/ics/:email', async function(req, res) {
   const email = req.params.email
 
   const c: Calendar = await db.calendar.findCalendarByEmail(email);
   const result = c.icsContent;
 
-  res.send({ result });
+  res.json({ result });
 });
 
 /* GET a list of all calendars for the user with given id. */
-router.get('/:email', async function(req, res) {
-  const email = req.params.email
+// router.get('/:email', async function(req, res) {
+//   const email = req.params.email
 
-  const calendars: [Calendar] = await db.calendar.findCalendarsByEmail(email);
-  const result = calendars.map((c: Calendar) => c.icsContent);
+//   const calendar: Calendar = await db.calendar.findCalendarByEmail(email);
+//   const result = calendar.icsContent;
 
-  res.send({ result });
+//   res.send({ result });
+// });
+
+router.post('/update', async function(req, res) {
+  const changes = req.query.changes as string;
+  const email = req.query.email.toString();
+  const icsContent = (await db.calendar.findCalendarByEmail(email)).icsContent;
+
+  const newIcsContent = writeDelta(changes, icsContent);
+  
+  db.calendar.updateCalendarContent(newIcsContent, email);
+  res.json({ newIcsContent });
 });
 
 /* POST creates a new calendar for user with userId. */
@@ -32,7 +44,7 @@ router.post('/', async function(req, res) {
 
   db.calendar.insertCalendar(new Calendar(id, icsContent, email, true));
 
-  res.send({ id, email });
+  res.json({ id, email });
 });
 
 /* DELETE sets the calendar with calendarId to inactive. */
@@ -41,7 +53,7 @@ router.delete('/:calendarId', function(req, res) {
 
   db.calendar.deleteCalendar(calendarId);
 
-  res.send({ calendarId });
+  res.json({ calendarId });
 });
 
 export default router;

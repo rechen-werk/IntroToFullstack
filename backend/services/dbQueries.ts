@@ -59,6 +59,7 @@ const UPDATE = {
     REQUEST_ACTIVE: `UPDATE request SET active = ? WHERE id = ?`,
     REQUEST: `UPDATE request SET (id, fromEmail, toEmail, start, end, title, description, status, active) = (?,?,?,?,?,?,?,?,?) WHERE id = ?`,
     CALENDAR: `UPDATE calendar SET (id, icsContent, email, active) = (?,?,?,?) WHERE id = ?`,
+    CALENDAR_CONTENT: `UPDATE calendar SET icsContent = ? WHERE email = ?`,
     CALENDAR_ACTIVE: `UPDATE calendar SET active = ? WHERE id = ?`,
 }
 

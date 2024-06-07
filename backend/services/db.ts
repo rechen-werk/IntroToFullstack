@@ -95,6 +95,7 @@ async function findCalendarByEmail(email: string): Promise<Calendar> {
         });
     });
 }
+
 async function findCalendarById(id: string): Promise<Calendar> {
     return new Promise((resolve, reject) => {
         db.get(queries.SELECT.CALENDAR_BY_ID, [id], (error: Error, row: any) => {
@@ -137,9 +138,9 @@ async function deleteRequest(id: string) {
 }
 
 // --- UPDATE ---
-async function updateCalendar(email: string, icsContent: string) {
-    console.log(`Updating calendar for user ${email}!`);
-    db.run(queries.UPDATE.CALENDAR, icsContent, email);
+async function updateCalendarContent(email: string, icsContent: string) {
+    console.log(`Updating calendar content for user ${email}!`);
+    db.run(queries.UPDATE.CALENDAR_CONTENT, icsContent, email);
 }
 
 async function updateUserEmail(oldEmail: string, newEmail: string) {
@@ -179,6 +180,7 @@ export default {
     calendar: {
         findCalendarById,
         findCalendarByEmail,
+        updateCalendarContent,
         insertCalendar,
         deleteCalendar,
         refreshCalendars,
