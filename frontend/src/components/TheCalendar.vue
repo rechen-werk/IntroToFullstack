@@ -163,7 +163,7 @@ export default {
       document.getElementById("request-modal").classList.remove("show-modal");
     },
     sendRequest() {
-      axios.post("http://localhost:3000/api/requests", {params:
+      /*axios.post("http://localhost:3000/api/requests", {params:
             {
               fromEmail: this.user.email,
               toEmail: this.calendarEmail,
@@ -176,7 +176,8 @@ export default {
         this.from = null;
         this.to = null;
         this.title = "";
-      })
+      })*/
+      this.ws?.send(`request:${this.user.email}:${this.calendarEmail}`)
     },
     donate() {
       if(Math.random() > 0.5)
