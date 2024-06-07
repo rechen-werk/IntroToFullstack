@@ -24,7 +24,7 @@ router.get('/for/:email', async function(req, res) {
 });
 
 /* POST creates a new request to toUserId from fromUserId. */
-router.post('/', async function(req, res) {
+router.post('/', function(req, res) {
   const id = createHash('sha256').update(Date.now().toString()).digest('hex');
   const fromEmail = req.query.fromEmail.toString();
   const toEmail = req.query.toEmail.toString();
@@ -40,16 +40,16 @@ router.post('/', async function(req, res) {
 });
 
 /* DELETE sets the request with the given id to inactive. */
-router.delete('/:requestId', async function(req, res) {
+router.delete('/:requestId', function(req, res) {
   const requestId = req.params.requestId
 
-  await db.request.deleteRequest(requestId);
+  db.request.deleteRequest(requestId);
 
   res.send(`delete user with id: ${requestId}`);
 });
 
 /* PUT updates the request to be accepted. */
-router.post('/accept/:requestId', async function(req, res) {
+router.post('/accept/:requestId', function(req, res) {
   const requestId = req.params.requestId;
 
   db.request.acceptRequest(requestId);
@@ -58,7 +58,7 @@ router.post('/accept/:requestId', async function(req, res) {
 });
 
 /* PUT updates the request to be denied. */
-router.post('/deny/:requestId', async function(req, res) {
+router.post('/deny/:requestId', function(req, res) {
   const requestId = req.params.requestId;
 
   db.request.denyRequest(requestId);

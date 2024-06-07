@@ -13,7 +13,7 @@ router.get('/ics/:email', async function(req, res) {
   const c: Calendar = await db.calendar.findCalendarByEmail(email);
 
   if (!c) {
-    res.json("not found");
+    res.status(404).send();
     return;
   }
   const result = c.icsContent;
@@ -54,13 +54,13 @@ router.post('/update', async function(req, res) {
 });
 
 /* POST creates a new calendar for user with userId. */
-router.post('/', async function(req, res) {
+router.post('/', function(req, res) {
 
   const id = createHash('sha256').update(Date.now().toString()).digest('hex');
   const icsContent = req.body;
   const email = req.query.email.toString();
 
-  await db.calendar.insertCalendar(id, icsContent, email);
+  db.calendar.insertCalendar(icsContent, email);
 
   res.json({ id, email });
 });

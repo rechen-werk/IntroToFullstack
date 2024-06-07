@@ -87,11 +87,11 @@ async function findRequestsByToUserId(email: string): Promise<[CalendarRequest]>
 async function findCalendarByEmail(email: string): Promise<Calendar> {
     return new Promise((resolve, reject) => {
         db.get(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, row: any) => {
-            if (error) {
+            if (error || !row) {
                 //reject(error);
                 resolve(null);
             } else {
-                resolve(new Calendar(row.id, row.icsContent, row.email));
+                resolve(new Calendar(row.icsContent, row.email));
             }
         });
     });
@@ -99,29 +99,31 @@ async function findCalendarByEmail(email: string): Promise<Calendar> {
 
 
 // --- INSERT ---
-async function insertUser(name: string, email: string) {
+function insertUser(name: string, email: string) {
     console.log(`Creating new user: ${email}!`);
     db.run(queries.INSERT.USER, name, email);
  }
-async function insertCalendar(icsContent: string, email: string) {
+function insertCalendar(icsContent: string, email: string) {
     console.log(`Creating new calendar: ${email}!`);
     db.run(queries.INSERT.CALENDAR, icsContent, email);
 }
 function insertRequest(calendarRequest: CalendarRequest) {
+    // TODO read icsContent and fill out fields
+
     console.log(`Creating new request: ${calendarRequest.id}, ${calendarRequest.fromEmail}, ${calendarRequest.toEmail}!`);
     db.run(queries.INSERT.REQUEST, calendarRequest.id, calendarRequest.fromEmail, calendarRequest.toEmail, calendarRequest.start, calendarRequest.end, calendarRequest.title, calendarRequest.description, calendarRequest.status);
 }
 
 // --- DELETE/ARCHIVE ---
-async function deleteUser(email: string) {
+function deleteUser(email: string) {
     console.log(`Deleting user ${email}!`);
     db.run(queries.DELETE.USER, email);
 }
-async function deleteCalendar(email: string) {
+function deleteCalendar(email: string) {
     console.log(`Deleting calendar ${email}!`);
     db.run(queries.UPDATE.CALENDAR_ACTIVE, false, email);
 }
-async function deleteRequest(id: string) {
+function deleteRequest(id: string) {
     console.log(`Deleting request ${id}!`);
     db.run(queries.UPDATE.REQUEST_ACTIVE, false, id);
 }
@@ -132,7 +134,7 @@ function updateCalendarContent(email: string, icsContent: string) {
     db.run(queries.UPDATE.CALENDAR_CONTENT, icsContent, email);
 }
 
-async function updateUserEmail(oldEmail: string, newEmail: string) {
+function updateUserEmail(oldEmail: string, newEmail: string) {
     console.log(`Updating user ${oldEmail} to email ${newEmail}!`);
     db.run(queries.UPDATE.USER, newEmail, oldEmail);
 }
@@ -157,7 +159,7 @@ function denyRequest(id: string) {
     updateRequestStatus(id, RequestStatus.DENIED);
     // TODO alert rejected!
 }
-async function refreshCalendars() { }
+function refreshCalendars() { }
 
 export default {
     user: {

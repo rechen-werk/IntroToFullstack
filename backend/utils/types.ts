@@ -8,12 +8,10 @@ class User {
     }
 }
 class Calendar {
-    id: string;
     icsContent: string;
     email: string;
 
-    constructor(id: string, icsContent: string, email: string) {
-        this.id = id;
+    constructor(icsContent: string, email: string) {
         this.icsContent = icsContent;
         this.email = email;
     }
