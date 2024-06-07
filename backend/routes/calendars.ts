@@ -5,10 +5,10 @@ import { Calendar } from "../utils/types";
 const router = express.Router();
 
 /* GET the ics-file for the calendar with given id. */
-router.get('/ics/:calendarId', async function(req, res) {
-  const calendarId = req.params.calendarId
+router.get('/ics/:email', async function(req, res) {
+  const email = req.params.email
 
-  const c: Calendar = await db.calendar.findCalendarById(calendarId);
+  const c: Calendar = await db.calendar.findCalendarByEmail(email);
   const result = c.icsContent;
 
   res.send({ result });

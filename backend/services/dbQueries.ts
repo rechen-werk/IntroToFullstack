@@ -10,7 +10,7 @@ const CREATE_TABLE = {
         icsContent TEXT NOT NULL, 
         email TEXT NOT NULL, 
         active INTEGER, 
-        PRIMARY KEY (id), 
+        PRIMARY KEY (email), 
         CONSTRAINT fk_user 
             FOREIGN KEY (email) REFERENCES user 
             ON DELETE CASCADE 
@@ -55,10 +55,10 @@ const DELETE = {
 const UPDATE = {
     USER: `UPDATE user SET email = ? WHERE email = ?`,
     USER_ACTIVE: `UPDATE user SET active = ? WHERE email = ?`,
-    REQUEST: `UPDATE calendar SET (id, icsContent, email, active) = (?,?,?,?) WHERE id = ?`,
     REQUEST_STATUS: `UPDATE request SET status = ? WHERE id = ?`,
     REQUEST_ACTIVE: `UPDATE request SET active = ? WHERE id = ?`,
-    CALENDAR: `UPDATE request SET (id, fromEmail, toEmail, start, end, title, description, status, active) = (?,?,?,?,?,?,?,?,?) WHERE id = ?`,
+    REQUEST: `UPDATE request SET (id, fromEmail, toEmail, start, end, title, description, status, active) = (?,?,?,?,?,?,?,?,?) WHERE id = ?`,
+    CALENDAR: `UPDATE calendar SET (id, icsContent, email, active) = (?,?,?,?) WHERE id = ?`,
     CALENDAR_ACTIVE: `UPDATE calendar SET active = ? WHERE id = ?`,
 }
 

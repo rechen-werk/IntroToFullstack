@@ -84,13 +84,13 @@ async function findRequestsByFromUserId(email: string): Promise<[CalendarRequest
 async function findRequestsByToUserId(email: string): Promise<[CalendarRequest]> {
     return queryRequests(queries.SELECT.REQUESTS_BY_TO_EMAIL, email);
 }
-async function findCalendarsByEmail(email: string): Promise<[Calendar]> {
+async function findCalendarByEmail(email: string): Promise<Calendar> {
     return new Promise((resolve, reject) => {
-        db.all(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, rows: any) => {
+        db.all(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, row: any) => {
             if (error) {
                 reject(error);
             } else {
-                resolve(rows.map((row: any) => new Calendar(row.id, row.ics_content, row.email, row.active)));
+                resolve(new Calendar(row.id, row.ics_content, row.email, row.active));
             }
         });
     });
@@ -137,6 +137,11 @@ async function deleteRequest(id: string) {
 }
 
 // --- UPDATE ---
+async function updateCalendar(email: string, icsContent: string) {
+    console.log(`Updating calendar for user ${email}!`);
+    db.run(queries.UPDATE.CALENDAR, icsContent, email);
+}
+
 async function updateUserEmail(oldEmail: string, newEmail: string) {
     console.log(`Updating user ${oldEmail} to email ${newEmail}!`);
     db.run(queries.UPDATE.USER, newEmail, oldEmail);
@@ -173,7 +178,7 @@ export default {
     },
     calendar: {
         findCalendarById,
-        findCalendarsByEmail,
+        findCalendarByEmail,
         insertCalendar,
         deleteCalendar,
         refreshCalendars,
