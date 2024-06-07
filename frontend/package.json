@@ -19,13 +19,15 @@
     "vue": "^3.4.21",
     "vue-cookies": "^1.8.4",
     "vue-router": "^4.3.2",
-    "vue3-google-login": "^2.0.26"
+    "vue3-google-login": "^2.0.26",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/ical": "^0.8.3",
     "@types/node": "^20.12.5",
+    "@types/ws": "^8.5.10",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",

@@ -32,7 +32,6 @@ export default {
       sub: string
     };
 
-
     return {
       user: user,
       daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -76,7 +75,8 @@ export default {
 
       searchQueryString: "",
       userList: [] as User[],
-      displayUserList: [] as User[]
+      displayUserList: [] as User[],
+      ws: null as WebSocket | null
     }
   },
   async created() {
@@ -90,6 +90,7 @@ export default {
       axios.get(`http://localhost:3000/api/calendars/ics/${this.calendarEmail}`).then((response) => {
         this.calendarContent = ical.parseICS(response.data);
       })
+      this.setupWebsocketClient()
     });
 
   },
@@ -129,6 +130,7 @@ export default {
     logout() {
       this.$cookies.remove("book-ya-mate-token")
       googleLogout();
+      this.ws?.close();
       router.push(`/`);
     },
     view(email: string) {
@@ -146,7 +148,30 @@ export default {
     search() {
       const query = this.searchQueryString.toLowerCase()
       this.displayUserList = this.userList.filter(u => this.user.email != u.email && (u.name.toLowerCase().includes(query) || u.email.toLowerCase().split("@")[0].includes(query)));
-    }
+    },
+    setupWebsocketClient() {
+      try {
+        const user = this.user;
+        const websocket = new WebSocket(`ws://localhost:3001/`)
+        this.ws = websocket
+
+        websocket.onopen = function(event) {
+          websocket.send(`open:${user.email}`)
+        };
+
+        websocket.onmessage = function(event) {
+          alert(`Received new request!\n${event.data}`);
+        };
+
+        websocket.onerror = function(event) {
+          alert('Error occurred while connecting to the WebSocket server');
+        };
+
+        websocket.onclose = function(event) {};
+      } catch(ex) {
+        alert(ex)
+      }
+    },
   }
 }
 

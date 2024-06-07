@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import bodyParser from "body-parser";
+import WebSocket from "ws";
 
 import userRouter from "./routes/users";
 import calendarRouter from "./routes/calendars";
@@ -28,6 +29,44 @@ app.use(cors(corsOptions));
 app.use('/api/users', userRouter);
 app.use('/api/calendars', calendarRouter);
 app.use('/api/requests', requestsRouter);
+
+const wss = new WebSocket.Server({ port: 3001 });
+const clientEmails: Map<string, WebSocket> = new Map();
+
+wss.on('connection', (ws, req) => {
+  console.log(`New WS Client connected, ${wss.clients.size} connected`);
+
+  const currentWs = ws;
+
+  ws.on('open', function open(email: string) {
+    clientEmails.set(email, currentWs);
+    console.log(`New connection opened, ${wss.clients.size} connected`);
+    console.log(`New email entry: ${email}`);
+  });
+
+  ws.on('close', () => {
+    clientEmails.forEach((client, email) => {
+      if (client === ws) {
+        clientEmails.delete(email);
+        console.log(`Email entry deleted: ${email}`);
+      }
+    });
+    console.log(`Client disconnected, ${wss.clients.size} connected`)
+  });
+
+  ws.on('request', function request(fromTo: string) {
+    const [fromEmail, toEmail] = fromTo.split(":");
+    const client = clientEmails.get(toEmail);
+    if (client && client.readyState === WebSocket.OPEN) {
+      client.send(`New request from: ${fromEmail}`);
+    }
+  });
+
+  ws.on('message', function message(msg) {
+    const [command, ...data] = msg.toString().split(":");
+    ws.emit(command, data.join(":"));
+  });
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

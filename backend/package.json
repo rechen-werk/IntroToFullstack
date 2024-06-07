@@ -18,13 +18,15 @@
     "ical": "^0.8.0",
     "morgan": "^1.10.0",
     "sqlite3": "^5.1.7",
-    "vue-cookies": "^1.8.4"
+    "vue-cookies": "^1.8.4",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.7",
+    "@types/ws": "^8.5.10",
     "rimraf": "^5.0.7",
     "typescript": "^5.4.5"
   }
