@@ -60,7 +60,7 @@ router.post('/', function(req, res) {
 
   db.calendar.insertCalendar(icsContent, email);
 
-  res.status(200).send;
+  res.status(200).send();
 });
 
 /* DELETE sets the calendar with calendarId to inactive. */
