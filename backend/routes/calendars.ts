@@ -55,14 +55,12 @@ router.post('/update', async function(req, res) {
 
 /* POST creates a new calendar for user with userId. */
 router.post('/', function(req, res) {
-
-  const id = createHash('sha256').update(Date.now().toString()).digest('hex');
   const icsContent = req.body;
   const email = req.query.email.toString();
 
   db.calendar.insertCalendar(icsContent, email);
 
-  res.json({ id, email });
+  res.status(200).send;
 });
 
 /* DELETE sets the calendar with calendarId to inactive. */
