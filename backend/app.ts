@@ -4,6 +4,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 import userRouter from "./routes/users";
 import calendarRouter from "./routes/calendars";
@@ -20,6 +21,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(bodyParser.text());
 app.use(express.static(path.join(__dirname, "..", 'public')));
 app.use(cors(corsOptions));
 

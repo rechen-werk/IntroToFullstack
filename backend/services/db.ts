@@ -86,11 +86,13 @@ async function findRequestsByToUserId(email: string): Promise<[CalendarRequest]>
 }
 async function findCalendarByEmail(email: string): Promise<Calendar> {
     return new Promise((resolve, reject) => {
-        db.all(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, row: any) => {
+        db.get(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, row: any) => {
             if (error) {
-                reject(error);
+                //reject(error);
+                resolve(null);
             } else {
-                resolve(new Calendar(row.id, row.ics_content, row.email));
+                const x = row;
+                resolve(new Calendar(row.id, row.icsContent, row.email));
             }
         });
     });
