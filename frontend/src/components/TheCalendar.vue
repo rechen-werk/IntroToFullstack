@@ -31,13 +31,6 @@ export default {
       sub: string
     };
 
-    axios.get("http://localhost:3000/api/users").then((response) => {
-      const emails = response.data.map((user: any) => user.email);
-      if (!emails.includes(user.email)) {
-        axios.put(`http://localhost:3000/api/users/new/${user.name}/${user.email}`);
-      }
-    });
-
 
     return {
       user: user,
@@ -89,10 +82,15 @@ export default {
     axios.get(`http://localhost:3000/api/users`).then((response) => {
       this.userList.push(...response.data);
       this.displayUserList = this.userList.filter(u => this.user.email != u.email);
+      const emails = response.data.map((user: any) => user.email);
+      if (!emails.includes(this.user.email)) {
+        axios.put(`http://localhost:3000/api/users/new/${this.user.name}/${this.user.email}`);
+      }
+      axios.get(`http://localhost:3000/api/calendars/ics/${this.calendarEmail}`).then((response) => {
+        this.calendarContent = ical.parseICS(response.data);
+      })
     });
-    axios.get(`http://localhost:3000/api/calendars/ics/${this.user.email}`).then((response) => {
-      this.calendarContent = ical.parseICS(response.data);
-    });
+
   },
   methods: {
     toggleCalendar(days: number) {
@@ -137,7 +135,11 @@ export default {
         const user = response.data[0];
         this.calendarEmail = user.email;
         this.calendarName = user.name;
+        axios.get(`http://localhost:3000/api/calendars/ics/${this.calendarEmail}`).then((response) => {
+          this.calendarContent = ical.parseICS(response.data);
+        });
       })
+
 
     },
     search() {
