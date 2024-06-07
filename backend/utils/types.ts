@@ -27,6 +27,7 @@ class CalendarRequest {
     end: string; 
     title: string; 
     description: string;
+    icsContent: string;
     status: RequestStatus;
 
     constructor(id: string, fromEmail: string, toEmail: string, start: string, end: string, title: string, description: string, status: RequestStatus) {

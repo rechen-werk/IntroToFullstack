@@ -19,3 +19,6 @@ COPY package*.json .
 RUN npm install --only=production
 
 COPY --from=build /home/big-brains/app/build ./build
+
+
+COPY ./local*/* ./local

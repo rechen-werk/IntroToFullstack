@@ -34,7 +34,7 @@ router.post('/', async function(req, res) {
   const description = req.query.description.toString();
   const status = RequestStatus.OPEN;
 
-  await db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, description, status));
+  db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, description, status));
 
   res.json({ id });
 });
@@ -52,7 +52,7 @@ router.delete('/:requestId', async function(req, res) {
 router.post('/accept/:requestId', async function(req, res) {
   const requestId = req.params.requestId;
 
-  await db.request.acceptRequest(requestId);
+  db.request.acceptRequest(requestId);
 
   res.send({ requestId })
 });
@@ -61,7 +61,7 @@ router.post('/accept/:requestId', async function(req, res) {
 router.post('/deny/:requestId', async function(req, res) {
   const requestId = req.params.requestId;
 
-  await db.request.denyRequest(requestId);
+  db.request.denyRequest(requestId);
 
   res.send({ requestId })
 });

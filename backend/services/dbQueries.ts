@@ -6,7 +6,6 @@ const CREATE_TABLE = {
         PRIMARY KEY (email) 
     )`,
     CALENDAR: `CREATE TABLE IF NOT EXISTS calendar( 
-        id TEXT NOT NULL, 
         icsContent TEXT NOT NULL, 
         email TEXT NOT NULL, 
         active INTEGER, 
@@ -40,7 +39,7 @@ const CREATE_TABLE = {
 
 const INSERT = {
     USER: `REPLACE INTO user(name, email, active) VALUES (?,?,TRUE)`,
-    CALENDAR: `REPLACE INTO calendar(id, icsContent, email, active) VALUES (?,?,?,TRUE)`,
+    CALENDAR: `REPLACE INTO calendar(icsContent, email, active) VALUES (?,?,TRUE)`,
     REQUEST: `REPLACE INTO 
     request(id, fromEmail, toEmail, start, end, title, description, status, active) 
     VALUES (?,?,?,?,?,?,?,?,TRUE)`,
@@ -48,7 +47,7 @@ const INSERT = {
 
 const DELETE = {
     USER: `DELETE FROM user WHERE email = ?`,
-    CALENDAR: `DELETE FROM calendar WHERE id = ?`,
+    CALENDAR: `DELETE FROM calendar WHERE email = ?`,
     REQUEST: `DELETE FROM request WHERE id = ?`,
 }
 
@@ -58,16 +57,15 @@ const UPDATE = {
     REQUEST_STATUS: `UPDATE request SET status = ? WHERE id = ?`,
     REQUEST_ACTIVE: `UPDATE request SET active = ? WHERE id = ?`,
     REQUEST: `UPDATE request SET (id, fromEmail, toEmail, start, end, title, description, status, active) = (?,?,?,?,?,?,?,?,?) WHERE id = ?`,
-    CALENDAR: `UPDATE calendar SET (id, icsContent, email, active) = (?,?,?,?) WHERE id = ?`,
+    CALENDAR: `UPDATE calendar SET (icsContent, email, active) = (?,?,?) WHERE email = ?`,
     CALENDAR_CONTENT: `UPDATE calendar SET icsContent = ? WHERE email = ?`,
-    CALENDAR_ACTIVE: `UPDATE calendar SET active = ? WHERE id = ?`,
+    CALENDAR_ACTIVE: `UPDATE calendar SET active = ? WHERE email = ?`,
 }
 
 const SELECT = {
     USERS: `SELECT * FROM user WHERE active = TRUE`,
     USER_BY_EMAIL: `SELECT * FROM user WHERE email = ? AND active = TRUE`,
     USERS_OTHER_THAN: `SELECT * FROM user WHERE email != ? AND active = TRUE`,
-    CALENDAR_BY_ID: `SELECT * FROM calendar WHERE id = ? AND active = TRUE`,
     CALENDAR_BY_EMAIL: `SELECT * FROM calendar WHERE email = ? AND active = TRUE`,
     REQUEST_BY_ID: `SELECT * FROM request WHERE id = ? AND active = TRUE`,
     REQUESTS_BY_FROM_EMAIL: `SELECT * FROM request WHERE fromEmail = ? AND active = TRUE`,
