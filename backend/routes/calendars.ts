@@ -2,7 +2,6 @@ import express from "express";
 import db from "../services/db";
 import { Calendar } from "../utils/types";
 import { writeDelta } from "../utils/icsprocessing";
-import { createHash } from "crypto";
 
 const router = express.Router();
 

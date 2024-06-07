@@ -145,8 +145,10 @@ function updateRequestStatus(id: string, status: RequestStatus) {
 }
 function acceptRequest(id: string) {
     updateRequestStatus(id, RequestStatus.ACCEPTED);
+
     db.get(queries.SELECT.REQUEST_BY_ID, id, (error: Error, request: CalendarRequest) => {
         if (!error) {
+            // TODO: build VEvent
             updateCalendarContent(request.toEmail, request.icsContent);
             // TODO alert accepted!
         } else {

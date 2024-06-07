@@ -41,7 +41,7 @@ router.get('/otherthan/:mail', async function(req, res) {
 router.delete('/:mail', async function(req, res) {
   const userId: string = req.params.mail as string;
 
-  await db.user.deleteUser(userId);
+  db.user.deleteUser(userId);
 
   res.send(`delete user with id: ${userId}`);
 });
@@ -49,11 +49,12 @@ router.delete('/:mail', async function(req, res) {
 /* PUT updates the mail for the user with this id. */
 router.put('/new/:name/:email', async function(req, res) {
   const name: string = req.params.name;
-  const mail: string = req.params.email;
+  const email: string = req.params.email;
 
-  await db.user.insertUser(name, mail);
+  db.user.insertUser(name, email);
+  db.calendar.insertCalendar("", email);
 
-  res.json({ name, mail })
+  res.status(200).send("User created successfully!");
 });
 
 // TODO: constraints!
@@ -62,7 +63,7 @@ router.post('/mail/:oldMail/:newMail', async function(req, res) {
   const oldMail: string = req.params.oldMail as string;
   const newMail: string = req.params.newMail as string;
 
-  await db.user.updateUserEmail(oldMail, newMail);
+  db.user.updateUserEmail(oldMail, newMail);
 
   res.send({ oldMail, newMail })
 });
