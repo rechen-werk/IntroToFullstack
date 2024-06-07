@@ -185,7 +185,7 @@ export default {
             </div>
             <div class="day-body">
               <div class="day-hour" v-for="index in 24" :key="index" />
-              <CalendarEntry v-for="appointment in weekdays[idx].content" :appointment=appointment />
+              <CalendarEntry v-for="appointment in weekdays[idx].content" :appointment=appointment :is-own-calendar="user.email === calendarEmail"/>
             </div>
           </div>
         </div>
