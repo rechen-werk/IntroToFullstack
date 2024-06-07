@@ -1,6 +1,7 @@
 import express from "express";
 import db from "../services/db";
 import { CalendarRequest, RequestStatus } from "../utils/types";
+import { createHash } from "crypto";
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.get('/for/:email', async function(req, res) {
 
 /* POST creates a new request to toUserId from fromUserId. */
 router.post('/', async function(req, res) {
-  const id = "TODO";
+  const id = createHash('sha256').update(Date.now().toString()).digest('hex');
   const fromEmail = req.query.fromEmail.toString();
   const toEmail = req.query.toEmail.toString();
   const from = req.query.from.toString();
@@ -33,9 +34,9 @@ router.post('/', async function(req, res) {
   const description = req.query.description.toString();
   const status = RequestStatus.OPEN;
 
-  await db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, description, status, true));
+  await db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, description, status));
 
-  res.send({ fromEmail, toEmail });
+  res.json({ id });
 });
 
 /* DELETE sets the request with the given id to inactive. */

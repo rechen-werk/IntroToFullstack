@@ -2,6 +2,7 @@ import express from "express";
 import db from "../services/db";
 import { Calendar } from "../utils/types";
 import { writeDelta } from "../utils/icsprocessing";
+import { createHash } from "crypto";
 
 const router = express.Router();
 
@@ -26,11 +27,22 @@ router.get('/ics/:email', async function(req, res) {
 // });
 
 router.post('/update', async function(req, res) {
-  const changes = req.query.changes as string;
-  const email = req.query.email.toString();
+  const changes = req.query.changes.toString();
+  const email = req.query.email as string;
+
+  if (!changes || !email) {
+    res.status(400).send("Missing parameters");
+    return;
+  }
+
   const icsContent = (await db.calendar.findCalendarByEmail(email)).icsContent;
 
   const newIcsContent = writeDelta(changes, icsContent);
+
+  if (!newIcsContent) {
+    res.status(400).send("Could not apply changes to calendar");
+    return;
+  }
   
   db.calendar.updateCalendarContent(newIcsContent, email);
   res.json({ newIcsContent });
@@ -38,11 +50,11 @@ router.post('/update', async function(req, res) {
 
 /* POST creates a new calendar for user with userId. */
 router.post('/', async function(req, res) {
-  const id = "TODO";
+  const id = createHash('sha256').update(Date.now().toString()).digest('hex');
   const icsContent = req.query.icsContent.toString();
   const email = req.query.email.toString();
 
-  db.calendar.insertCalendar(new Calendar(id, icsContent, email, true));
+  db.calendar.insertCalendar(id, icsContent, email);
 
   res.json({ id, email });
 });

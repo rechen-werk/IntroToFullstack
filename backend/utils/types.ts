@@ -11,13 +11,11 @@ class Calendar {
     id: string;
     icsContent: string;
     email: string;
-    active: boolean;
 
-    constructor(id: string, icsContent: string, email: string, active: boolean) {
+    constructor(id: string, icsContent: string, email: string) {
         this.id = id;
         this.icsContent = icsContent;
         this.email = email;
-        this.active = active;
     }
 }
 
@@ -30,9 +28,8 @@ class CalendarRequest {
     title: string; 
     description: string;
     status: RequestStatus;
-    active: boolean;
 
-    constructor(id: string, fromEmail: string, toEmail: string, start: string, end: string, title: string, description: string, status: RequestStatus, active: boolean) {
+    constructor(id: string, fromEmail: string, toEmail: string, start: string, end: string, title: string, description: string, status: RequestStatus) {
         this.id = id;
         this.fromEmail = fromEmail;
         this.toEmail = toEmail;
@@ -41,7 +38,6 @@ class CalendarRequest {
         this.title = title;
         this.description = description;
         this.status = status;
-        this.active = active;
     }
 }
 

@@ -73,7 +73,7 @@ function queryRequests(query: string, email: string): Promise<[CalendarRequest]>
             if (error) {
                 reject(error);
             } else {
-                resolve(rows.map((row: any) => new CalendarRequest(row.id, row.from_email, row.to_email, row.start, row.end, row.title, row.description, row.status, row.active)));
+                resolve(rows.map((row: any) => new CalendarRequest(row.id, row.from_email, row.to_email, row.start, row.end, row.title, row.description, row.status)));
             }
         });
     });
@@ -90,7 +90,7 @@ async function findCalendarByEmail(email: string): Promise<Calendar> {
             if (error) {
                 reject(error);
             } else {
-                resolve(new Calendar(row.id, row.ics_content, row.email, row.active));
+                resolve(new Calendar(row.id, row.ics_content, row.email));
             }
         });
     });
@@ -102,7 +102,7 @@ async function findCalendarById(id: string): Promise<Calendar> {
             if (error) {
                 reject(error);
             } else {
-                resolve(new Calendar(row.id, row.ics_content, row.email, row.active));
+                resolve(new Calendar(row.id, row.ics_content, row.email));
             }
         });
     });
@@ -114,9 +114,9 @@ async function insertUser(name: string, email: string) {
     console.log(`Creating new user: ${email}!`);
     db.run(queries.INSERT.USER, name, email);
  }
-async function insertCalendar(calendar: Calendar) {
-    console.log(`Creating new calendar: ${calendar.id}, ${calendar.email}!`);
-    db.run(queries.INSERT.CALENDAR, calendar.id, calendar.icsContent, calendar.email);
+async function insertCalendar(id: string, icsContent: string, email: string) {
+    console.log(`Creating new calendar: ${id}, ${email}!`);
+    db.run(queries.INSERT.CALENDAR, id, icsContent, email);
 }
 async function insertRequest(calendarRequest: CalendarRequest) {
     console.log(`Creating new request: ${calendarRequest.id}, ${calendarRequest.fromEmail}, ${calendarRequest.toEmail}!`);
