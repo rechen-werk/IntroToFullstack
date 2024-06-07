@@ -7,9 +7,10 @@ import type {VueCookies} from "vue-cookies";
 import TheSearchResult from "@/components/TheSearchResult.vue";
 import type {User} from "@/model/User";
 import ical, {type CalendarComponent, type FullCalendar} from 'ical'
+import CalendarEntry from "@/components/CalendarEntry.vue";
 
 export default {
-  components: {TheSearchResult},
+  components: {CalendarEntry, TheSearchResult},
   data: function () {
     const now = new Date()
     const current = new Date(now)
@@ -183,8 +184,8 @@ export default {
               <div class="day-number"> {{ weekdays[idx].date.getDate() }} </div>
             </div>
             <div class="day-body">
-              <div class="day-hour" v-for="index in 24" :key="index">
-              </div>
+              <div class="day-hour" v-for="index in 24" :key="index" />
+              <CalendarEntry v-for="appointment in weekdays[idx].content" :appointment=appointment />
             </div>
           </div>
         </div>
@@ -334,6 +335,9 @@ export default {
     display: flex;
     flex-direction: column;
     flex: 1;
+
+    width: 100%;
+    position: relative;
   }
   .day-header {
     text-align: center;
@@ -390,7 +394,7 @@ export default {
   }
   .search > .form > button {
     flex: 1;
-    background-color: yellow;
+    background-color: #f1c40f;
     cursor: pointer;
   }
   .search > .form > button > img{
