@@ -16,6 +16,7 @@
     "express": "~4.19.2",
     "http-errors": "~1.6.3",
     "ical": "^0.8.0",
+    "ics": "^3.7.2",
     "morgan": "^1.10.0",
     "sqlite3": "^5.1.7",
     "vue-cookies": "^1.8.4",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
+    "@types/ical": "^0.8.3",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.7",
     "@types/ws": "^8.5.10",

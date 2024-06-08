@@ -2,6 +2,8 @@ import { Database, OPEN_READWRITE, OPEN_CREATE } from "sqlite3";
 import queries from "./dbQueries";
 import fs from 'fs';
 import { User, Calendar, CalendarRequest, RequestStatus } from "../utils/types";
+import * as ics from "ics";
+import {writeDelta} from "../utils/icsprocessing";
 
 const DIR = './local';
 const DB_NAME = 'bookYaMate.db';
@@ -108,8 +110,6 @@ function insertCalendar(icsContent: string, email: string) {
     db.run(queries.INSERT.CALENDAR, icsContent, email);
 }
 function insertRequest(calendarRequest: CalendarRequest) {
-    // TODO read icsContent and fill out fields
-
     console.log(`Creating new request: ${calendarRequest.id}, ${calendarRequest.fromEmail}, ${calendarRequest.toEmail}!`);
     db.run(queries.INSERT.REQUEST, calendarRequest.id, calendarRequest.fromEmail, calendarRequest.toEmail, calendarRequest.start, calendarRequest.end, calendarRequest.title, calendarRequest.status);
 }
@@ -146,12 +146,26 @@ function updateRequestStatus(id: string, status: RequestStatus) {
 function acceptRequest(id: string) {
     updateRequestStatus(id, RequestStatus.ACCEPTED);
 
-    db.get(queries.SELECT.REQUEST_BY_ID, id, (error: Error, request: CalendarRequest) => {
+    db.get(queries.SELECT.REQUEST_BY_ID, id, async (error: Error, request: CalendarRequest) => {
         if (!error) {
             // TODO: build VEvent
-            let requestContent = "";
+            const event = {
+                start: request.start,
+                end: request.end,
+                title: request.title
+            } as ics.EventAttributes
 
-            updateCalendarContent(request.toEmail, requestContent);
+            const { error, value } = ics.createEvent(event);
+
+
+            let changes = value.toString();
+
+            const cal = await findCalendarByEmail(request.toEmail);
+
+            const newIcsContent = writeDelta(changes, cal.icsContent);
+
+
+            updateCalendarContent(request.toEmail, newIcsContent);
             // TODO alert accepted!
         } else {
             console.log(error);
