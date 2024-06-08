@@ -33,6 +33,13 @@ router.post('/', function(req, res) {
   const title = req.query.title.toString();
   const status = RequestStatus.OPEN;
 
+  const start = new Date(from);
+  const end = new Date(to);
+  if (start >= end || start.getDay() != end.getDay()) {
+    res.status(400).send("Invalid time range");
+    return;
+  }
+
   db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, status));
 
   res.json({ id });

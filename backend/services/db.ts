@@ -75,12 +75,12 @@ function queryRequests(query: string, email: string): Promise<[CalendarRequest]>
             if (error) {
                 reject(error);
             } else {
-                resolve(rows.map((row: any) => new CalendarRequest(row.id, row.from_email, row.to_email, row.start, row.end, row.title, row.status)));
+                resolve(rows.map((row: any) => new CalendarRequest(row.id, row.fromEmail, row.toEmail, row.start, row.end, row.title, row.status)));
             }
         });
     });
 }
-async function findRequestsByFromUserId(email: string): Promise<[CalendarRequest]> { 
+async function findRequestsByFromUserId(email: string): Promise<[CalendarRequest]> {
     return queryRequests(queries.SELECT.REQUESTS_BY_FROM_EMAIL, email);
 }
 async function findRequestsByToUserId(email: string): Promise<[CalendarRequest]> {
