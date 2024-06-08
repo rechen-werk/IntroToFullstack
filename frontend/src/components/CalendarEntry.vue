@@ -5,8 +5,10 @@ export default {
   props: ["appointment", "isOwnCalendar"],
   data() {
     const component = this.appointment as CalendarComponent
-    const start = component.start.getHours() + component.start.getMinutes() / 60;
-    const duration = (component.end.getHours() + component.end.getMinutes() / 60) - start;
+    const startDate = new Date(component.start);
+    const endDate = new Date(component.end);
+    const start = startDate.getHours() + startDate.getMinutes() / 60;
+    const duration = (endDate.getHours() + endDate.getMinutes() / 60) - start;
     return {
       title: component.summary,
       start,

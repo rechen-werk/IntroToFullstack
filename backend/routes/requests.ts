@@ -51,7 +51,7 @@ router.delete('/:requestId', function(req, res) {
 
   db.request.deleteRequest(requestId);
 
-  res.send(`delete user with id: ${requestId}`);
+  res.json(`delete user with id: ${requestId}`);
 });
 
 /* PUT updates the request to be accepted. */
@@ -60,7 +60,7 @@ router.post('/accept/:requestId', function(req, res) {
 
   db.request.acceptRequest(requestId);
 
-  res.send({ requestId })
+  res.json({ requestId })
 });
 
 /* PUT updates the request to be denied. */
@@ -69,6 +69,6 @@ router.post('/deny/:requestId', function(req, res) {
 
   db.request.denyRequest(requestId);
 
-  res.send({ requestId })
+  res.json({ requestId })
 });
 export default router;

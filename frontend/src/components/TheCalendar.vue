@@ -110,6 +110,7 @@ export default {
       }
       axios.get(`http://localhost:3000/api/calendars/ics/${this.calendarEmail}`).then((response) => {
         this.calendarContent = ical.parseICS(response.data);
+        this.toggleCalendar(0);
       })
       this.setupWebsocketClient()
     });
@@ -117,8 +118,8 @@ export default {
   methods: {
     toggleCalendar(days: number) {
       const isToday = function (date: Date, component: CalendarComponent): boolean {
-        const start = component.start;
-        const end = component.end;
+        const start = new Date(component.start);
+        const end = new Date(component.end);
         if(start && end) {
           const startIsToday =
               start.getFullYear() === date.getFullYear() &&
@@ -187,17 +188,16 @@ export default {
     viewRequests() {
       router.push(`/requests/${this.user.email}`);
     },
-    view(email: string) {
+    viewUser(email: string) {
       axios.get(`http://localhost:3000/api/users/${email}`).then((response) => {
         const user = response.data[0];
         this.calendarEmail = user.email;
         this.calendarName = user.name;
         axios.get(`http://localhost:3000/api/calendars/ics/${this.calendarEmail}`).then((response) => {
           this.calendarContent = ical.parseICS(response.data);
+          this.toggleCalendar(0);
         });
       })
-
-
     },
     search() {
       const query = this.searchQueryString.toLowerCase()
@@ -250,7 +250,7 @@ export default {
       <div class="calendar-container">
         <nav class="calendar-nav">
           <div class="calendar-nav-left">
-            <button class="username-button" @click="view(user.email)" title="View your own calendar">{{user.name}} </button>
+            <button class="username-button" @click="viewUser(user.email)" title="View your own calendar">{{user.name}} </button>
             <div class="view-div">
               <span class="viewing-span">viewing </span>
               <span class="viewed-user" v-if="calendarEmail !== user.email">{{ calendarName }}</span>
@@ -300,7 +300,7 @@ export default {
             <button type="submit" value="" @click="search"><img src="/src/icons/search-line-icon.png"></button>
           </div>
           <div class="search-results">
-            <TheSearchResult v-for="user in displayUserList" :user=user @setView="view"/>
+            <TheSearchResult v-for="user in displayUserList" :user=user @setView="viewUser"/>
           </div>
         </div>
       </div>
