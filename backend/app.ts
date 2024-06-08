@@ -30,8 +30,8 @@ app.use('/api/users', userRouter);
 app.use('/api/calendars', calendarRouter);
 app.use('/api/requests', requestsRouter);
 
-const wss = new WebSocket.Server({ port: 3001 });
-const clientEmails: Map<string, WebSocket> = new Map();
+export const wss = new WebSocket.Server({ port: 3001 });
+export const clientEmails: Map<string, WebSocket> = new Map();
 
 wss.on('connection', (ws, req) => {
   console.log(`New WS Client connected, ${wss.clients.size} connected`);

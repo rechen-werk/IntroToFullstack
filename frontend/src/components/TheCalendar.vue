@@ -214,7 +214,7 @@ export default {
         };
 
         websocket.onmessage = function(event) {
-          alert(`Received new request!\n${event.data}`);
+          alert(`${event.data}`);
         };
 
         websocket.onerror = function(event) {

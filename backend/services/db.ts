@@ -86,6 +86,17 @@ async function findRequestsByFromUserId(email: string): Promise<[CalendarRequest
 async function findRequestsByToUserId(email: string): Promise<[CalendarRequest]> {
     return queryRequests(queries.SELECT.REQUESTS_BY_TO_EMAIL, email);
 }
+async function findRequestById(id: string): Promise<CalendarRequest> {
+    return new Promise((resolve, reject) => {
+        db.get(queries.SELECT.REQUEST_BY_ID, [id], (error: Error, row: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(new CalendarRequest(row.id, row.fromEmail, row.toEmail, row.start, row.end, row.title, row.status));
+            }
+        });
+    });
+}
 async function findCalendarByEmail(email: string): Promise<Calendar> {
     return new Promise((resolve, reject) => {
         db.get(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, row: any) => {
@@ -166,7 +177,6 @@ function acceptRequest(id: string) {
 
 
             updateCalendarContent(request.toEmail, newIcsContent);
-            // TODO alert accepted!
         } else {
             console.log(error);
         }
@@ -175,7 +185,6 @@ function acceptRequest(id: string) {
 }
 function denyRequest(id: string) {
     updateRequestStatus(id, RequestStatus.DENIED);
-    // TODO alert rejected!
 }
 function refreshCalendars() { }
 
@@ -191,6 +200,7 @@ export default {
     request: {
         findRequestsByFromUserId,
         findRequestsByToUserId,
+        findRequestById,
         insertRequest,
         deleteRequest,
         acceptRequest,

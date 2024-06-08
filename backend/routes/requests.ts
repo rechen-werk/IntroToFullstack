@@ -2,6 +2,8 @@ import express from "express";
 import db from "../services/db";
 import { CalendarRequest, RequestStatus } from "../utils/types";
 import { createHash } from "crypto";
+import { clientEmails } from "../app";
+import WebSocket from "ws";
 
 const router = express.Router();
 
@@ -46,28 +48,46 @@ router.post('/', function(req, res) {
 });
 
 /* DELETE sets the request with the given id to inactive. */
-router.delete('/:requestId', function(req, res) {
+router.delete('/:requestId', async function(req, res) {
   const requestId = req.params.requestId
+  const request = await db.request.findRequestById(requestId);
 
   db.request.deleteRequest(requestId);
 
-  res.json(`delete user with id: ${requestId}`);
+  const client = clientEmails.get(request.toEmail)
+  if (client && client.readyState === WebSocket.OPEN) {
+    client.send(`A request from ${request.fromEmail} has been canceled!`);
+  }
+
+  res.json(`Canceled request with id: ${requestId}`);
 });
 
 /* PUT updates the request to be accepted. */
-router.post('/accept/:requestId', function(req, res) {
+router.post('/accept/:requestId', async function(req, res) {
   const requestId = req.params.requestId;
+  const request = await db.request.findRequestById(requestId);
 
   db.request.acceptRequest(requestId);
+
+  const client = clientEmails.get(request.fromEmail)
+  if (client && client.readyState === WebSocket.OPEN) {
+    client.send(`Your request to ${request.toEmail} has been accepted!`);
+  }
 
   res.json({ requestId })
 });
 
 /* PUT updates the request to be denied. */
-router.post('/deny/:requestId', function(req, res) {
+router.post('/deny/:requestId', async function(req, res) {
   const requestId = req.params.requestId;
+  const request = await db.request.findRequestById(requestId);
 
   db.request.denyRequest(requestId);
+
+  const client = clientEmails.get(request.fromEmail)
+  if (client && client.readyState === WebSocket.OPEN) {
+    client.send(`Your request to ${request.toEmail} has been denied!`);
+  }
 
   res.json({ requestId })
 });
