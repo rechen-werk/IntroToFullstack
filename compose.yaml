@@ -13,6 +13,7 @@ services:
     container_name: app-backend
     ports: 
       - "3000:3000"
+      - "3001:3001"
   frontend:
     build:
       context: ./frontend
