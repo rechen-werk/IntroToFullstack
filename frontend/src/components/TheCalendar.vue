@@ -113,7 +113,6 @@ export default {
       })
       this.setupWebsocketClient()
     });
-
   },
   methods: {
     toggleCalendar(days: number) {
@@ -163,7 +162,7 @@ export default {
       document.getElementById("request-modal").classList.remove("show-modal");
     },
     sendRequest() {
-      /*axios.post("http://localhost:3000/api/requests", {params:
+      axios.post("http://localhost:3000/api/requests", null,{params:
             {
               fromEmail: this.user.email,
               toEmail: this.calendarEmail,
@@ -176,7 +175,7 @@ export default {
         this.from = null;
         this.to = null;
         this.title = "";
-      })*/
+      })
       this.ws?.send(`request:${this.user.email}:${this.calendarEmail}`)
     },
     donate() {
@@ -184,6 +183,9 @@ export default {
         window.location = "https://ko-fi.com/rechenwerk"
       else
         window.location = "https://ko-fi.com/biogustav";
+    },
+    viewRequests() {
+      router.push(`/requests/${this.user.email}`);
     },
     view(email: string) {
       axios.get(`http://localhost:3000/api/users/${email}`).then((response) => {
@@ -265,8 +267,9 @@ export default {
             <div id="user-options" class="dropdown">
               <button v-if="user.email !== calendarEmail" @click="showModal()">Request Time</button>
               <button v-else @click="showModal()">Reserve Time</button>
-              <button @click="logout()">Log out</button>
+              <button @click="viewRequests()">View my requests</button>
               <button @click="donate()">Donate</button>
+              <button @click="logout()">Log out</button>
             </div>
           </div>
         </nav>
@@ -399,7 +402,7 @@ export default {
     right: 0;
     transform: translateY(-8px);
     background-color: #646464;
-    min-width: 160px;
+    width: 180px;
     z-index: 1;
   }
 
