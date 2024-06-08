@@ -73,7 +73,7 @@ function queryRequests(query: string, email: string): Promise<[CalendarRequest]>
             if (error) {
                 reject(error);
             } else {
-                resolve(rows.map((row: any) => new CalendarRequest(row.id, row.from_email, row.to_email, row.start, row.end, row.title, row.description, row.status)));
+                resolve(rows.map((row: any) => new CalendarRequest(row.id, row.from_email, row.to_email, row.start, row.end, row.title, row.status)));
             }
         });
     });
@@ -111,7 +111,7 @@ function insertRequest(calendarRequest: CalendarRequest) {
     // TODO read icsContent and fill out fields
 
     console.log(`Creating new request: ${calendarRequest.id}, ${calendarRequest.fromEmail}, ${calendarRequest.toEmail}!`);
-    db.run(queries.INSERT.REQUEST, calendarRequest.id, calendarRequest.fromEmail, calendarRequest.toEmail, calendarRequest.start, calendarRequest.end, calendarRequest.title, calendarRequest.description, calendarRequest.status);
+    db.run(queries.INSERT.REQUEST, calendarRequest.id, calendarRequest.fromEmail, calendarRequest.toEmail, calendarRequest.start, calendarRequest.end, calendarRequest.title, calendarRequest.status);
 }
 
 // --- DELETE/ARCHIVE ---
@@ -149,7 +149,9 @@ function acceptRequest(id: string) {
     db.get(queries.SELECT.REQUEST_BY_ID, id, (error: Error, request: CalendarRequest) => {
         if (!error) {
             // TODO: build VEvent
-            updateCalendarContent(request.toEmail, request.icsContent);
+            let requestContent = "";
+
+            updateCalendarContent(request.toEmail, requestContent);
             // TODO alert accepted!
         } else {
             console.log(error);

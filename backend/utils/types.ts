@@ -23,19 +23,16 @@ class CalendarRequest {
     toEmail: string; 
     start: string; 
     end: string; 
-    title: string; 
-    description: string;
-    icsContent: string;
+    title: string;
     status: RequestStatus;
 
-    constructor(id: string, fromEmail: string, toEmail: string, start: string, end: string, title: string, description: string, status: RequestStatus) {
+    constructor(id: string, fromEmail: string, toEmail: string, start: string, end: string, title: string, status: RequestStatus) {
         this.id = id;
         this.fromEmail = fromEmail;
         this.toEmail = toEmail;
         this.start = start;
         this.end = end;
         this.title = title;
-        this.description = description;
         this.status = status;
     }
 }

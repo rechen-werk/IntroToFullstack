@@ -22,7 +22,6 @@ const CREATE_TABLE = {
         start TEXT NOT NULL, 
         end TEXT NOT NULL, 
         title TEXT NOT NULL, 
-        description TEXT, 
         status INTEGER, 
         active INTEGER, 
         PRIMARY KEY (id), 
@@ -41,8 +40,8 @@ const INSERT = {
     USER: `REPLACE INTO user(name, email, active) VALUES (?,?,TRUE)`,
     CALENDAR: `REPLACE INTO calendar(icsContent, email, active) VALUES (?,?,TRUE)`,
     REQUEST: `REPLACE INTO 
-    request(id, fromEmail, toEmail, start, end, title, description, status, active) 
-    VALUES (?,?,?,?,?,?,?,?,TRUE)`,
+    request(id, fromEmail, toEmail, start, end, title, status, active) 
+    VALUES (?,?,?,?,?,?,?,TRUE)`,
 }
 
 const DELETE = {
@@ -56,7 +55,7 @@ const UPDATE = {
     USER_ACTIVE: `UPDATE user SET active = ? WHERE email = ?`,
     REQUEST_STATUS: `UPDATE request SET status = ? WHERE id = ?`,
     REQUEST_ACTIVE: `UPDATE request SET active = ? WHERE id = ?`,
-    REQUEST: `UPDATE request SET (id, fromEmail, toEmail, start, end, title, description, status, active) = (?,?,?,?,?,?,?,?,?) WHERE id = ?`,
+    REQUEST: `UPDATE request SET (id, fromEmail, toEmail, start, end, title, status, active) = (?,?,?,?,?,?,?,?) WHERE id = ?`,
     CALENDAR: `UPDATE calendar SET (icsContent, email, active) = (?,?,?) WHERE email = ?`,
     CALENDAR_CONTENT: `UPDATE calendar SET icsContent = ? WHERE email = ?`,
     CALENDAR_ACTIVE: `UPDATE calendar SET active = ? WHERE email = ?`,

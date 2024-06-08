@@ -5,7 +5,6 @@ export interface CalendarRequest {
     start: Date;
     end: Date;
     title: string;
-    description: string;
     status: Status;
     active: boolean
 }

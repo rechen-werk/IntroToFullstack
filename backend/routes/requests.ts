@@ -31,10 +31,9 @@ router.post('/', function(req, res) {
   const from = req.query.from.toString();
   const to = req.query.to.toString();
   const title = req.query.title.toString();
-  const description = req.query.description.toString();
   const status = RequestStatus.OPEN;
 
-  db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, description, status));
+  db.request.insertRequest(new CalendarRequest(id, fromEmail, toEmail, from, to, title, status));
 
   res.json({ id });
 });
