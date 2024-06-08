@@ -11,10 +11,6 @@ router.get('/ics/:email', async function(req, res) {
 
   const c: Calendar = await db.calendar.findCalendarByEmail(email);
 
-  if (!c) {
-    res.status(404).send();
-    return;
-  }
   const result = c.icsContent;
 
   res.json(result);

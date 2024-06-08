@@ -52,7 +52,7 @@ router.put('/new/:name/:email', async function(req, res) {
   const email: string = req.params.email;
 
   db.user.insertUser(name, email);
-  db.calendar.insertCalendar("", email);
+  db.calendar.insertCalendar("BEGIN:VCALENDAR\nEND:VCALENDAR", email);
 
   res.status(200).send("User created successfully!");
 });
