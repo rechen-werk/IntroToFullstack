@@ -1,13 +1,11 @@
 export interface CalendarRequest {
     id: string;
-    from_user_id: string;
-    to_user_id: string;
+    fromEmail: string;
+    toEmail: string;
     start: Date;
     end: Date;
     title: string;
-    description: string;
     status: Status;
-    active: boolean
 }
 
 export enum Status {
