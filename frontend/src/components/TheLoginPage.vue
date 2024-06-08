@@ -23,21 +23,70 @@ export default {
 </script>
 <template>
   <div class="container">
-    <h1>Book Ya Mate</h1>
-    <div class="login-container">
-      <GoogleLogin :callback="login" auto-login prompt/>
-      <div style="padding: 32px 0;">
-        <p>This site would have a lot of potential, but we only provide a sign in button which logs you in via Google.</p>
-        <p>If you have money, we are willing to take it, and in favor we would put some advertisement here for you.</p>
-        <p>Instead here is a picture of a cat:</p>
+    <aside>
+      <div>
+        <h2>Project</h2>
+        <p>Find this repository on <a href="https://github.com/rechen-werk/IntroToFullstack" target="_blank">Github</a>.</p>
       </div>
-      <img src="https://cataas.com/cat" alt="Image of random cat." style="width: 50%">
-    </div>
+      <div>
+        <h2>Contributors</h2>
+        <p><a href="https://github.com/rechen-werk" target="_blank">Adrian Vinojcic</a></p>
+        <p><a href="https://github.com/BioGustav" target="_blank">Tobias Pilz</a></p>
+      </div>
+    </aside>
+    <main>
+      <h1>Book Ya Mate</h1>
+      <div class="login-container">
+        <GoogleLogin :callback="login" auto-login prompt/>
+        <div style="padding: 32px 0;">
+          <p>This site would have a lot of potential, but we only provide a sign in button which logs you in via Google.</p>
+          <p>If you have money, we are willing to take it, and in favor we would put some advertisement here for you.</p>
+          <p>Instead here is a picture of a cat:</p>
+        </div>
+        <img src="https://cataas.com/cat" alt="Image of random cat." style="width: 50%">
+      </div>
+    </main>
   </div>
 </template>
 
 <style scoped>
+* {
+  user-select: none;
+}
 .container {
+  display: flex;
+  flex-direction: row;
+}
+aside {
+  position: absolute;
+  left: -180px;
+  transition: 0.3s;
+  padding: 15px 40px 15px 15px;
+  width: 220px;
+  font-size: 20px;
+  background-color: #8c8c8c;
+  border-radius: 0 5px 5px 0;
+  height: 80%;
+  margin: 5% 0;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 20px;
+}
+aside * {
+  color: #f1c40f;
+}
+aside:hover {
+  left: 0;
+}
+a {
+  text-decoration: none;
+  color: #f0dfff;
+}
+h2 {
+  font-size: 24px;
+}
+main {
   display: flex;
   flex-direction: column;
   justify-content: center;
