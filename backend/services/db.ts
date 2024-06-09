@@ -159,7 +159,6 @@ function acceptRequest(id: string) {
 
     db.get(queries.SELECT.REQUEST_BY_ID, id, async (error: Error, request: CalendarRequest) => {
         if (!error) {
-            // TODO: build VEvent
             const event = {
                 start: request.start,
                 end: request.end,
@@ -186,7 +185,6 @@ function acceptRequest(id: string) {
 function denyRequest(id: string) {
     updateRequestStatus(id, RequestStatus.DENIED);
 }
-function refreshCalendars() { }
 
 export default {
     user: {
@@ -211,6 +209,5 @@ export default {
         updateCalendarContent,
         insertCalendar,
         deleteCalendar,
-        refreshCalendars,
     },
 };

@@ -28,5 +28,5 @@ services:
     container_name: app-frontend
     ports:
       - "8000:8000"
-    # links:
-    # - backend
+    links:
+      - backend

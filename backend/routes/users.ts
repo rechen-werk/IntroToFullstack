@@ -30,13 +30,6 @@ router.get('/otherthan/:mail', async function(req, res) {
   res.json(users);
 });
 
-/* GET the user with the specified id. */
-// router.get('/by-id/:userId', function(req, res) {
-//   const userId: string = req.params.userId
-
-//   res.send(`search by id: ${userId}`);
-// });
-
 /* DELETE sets the user with the given id to inactive. */
 router.delete('/:mail', async function(req, res) {
   const userId: string = req.params.mail as string;
@@ -47,7 +40,7 @@ router.delete('/:mail', async function(req, res) {
 });
 
 /* PUT updates the mail for the user with this id. */
-router.put('/new/:name/:email', async function(req, res) {
+router.put('/new/:name/:email', function(req, res) {
   const name: string = req.params.name;
   const email: string = req.params.email;
 
@@ -57,7 +50,6 @@ router.put('/new/:name/:email', async function(req, res) {
   res.status(200).send("User created successfully!");
 });
 
-// TODO: constraints!
 /* POST updates the mail for the user with this old mail. */
 router.post('/mail/:oldMail/:newMail', async function(req, res) {
   const oldMail: string = req.params.oldMail as string;
@@ -67,17 +59,5 @@ router.post('/mail/:oldMail/:newMail', async function(req, res) {
 
   res.send({ oldMail, newMail })
 });
-
-/* PUT updates the username for the user with this id. */
-// router.put('/name/:userId/:name', async function(req, res) {
-//   const userId: string = req.params.userId
-//   const name: string = req.params.name
-
-//   // TODO: get email address!
-//   const email: string = "example@gmail.com"
-
-//   await db.user.insertUser(email);
-//   res.send({ email })
-// });
 
 export default router;

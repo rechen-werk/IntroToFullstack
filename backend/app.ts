@@ -41,14 +41,12 @@ wss.on('connection', (ws, req) => {
   ws.on('open', function open(email: string) {
     clientEmails.set(email, currentWs);
     console.log(`New connection opened, ${wss.clients.size} connected`);
-    console.log(`New email entry: ${email}`);
   });
 
   ws.on('close', () => {
     clientEmails.forEach((client, email) => {
       if (client === ws) {
         clientEmails.delete(email);
-        console.log(`Email entry deleted: ${email}`);
       }
     });
     console.log(`Client disconnected, ${wss.clients.size} connected`)
@@ -84,6 +82,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-console.log("App running at http://localhost:3000/")
+console.log("Backend-app running at http://localhost:3000/")
+console.log("Websocket running at ws://localhost:3001/")
 
 export default app;

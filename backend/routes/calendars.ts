@@ -16,16 +16,7 @@ router.get('/ics/:email', async function(req, res) {
   res.json(result);
 });
 
-/* GET a list of all calendars for the user with given id. */
-// router.get('/:email', async function(req, res) {
-//   const email = req.params.email
-
-//   const calendar: Calendar = await db.calendar.findCalendarByEmail(email);
-//   const result = calendar.icsContent;
-
-//   res.send({ result });
-// });
-
+/* POST an updated version of icsContent into the database */
 router.post('/update', async function(req, res) {
   const changes = req.query.changes.toString();
   const email = req.query.email as string;

@@ -172,7 +172,7 @@ export default {
               title: this.title
             }
       }).then((response) => {
-        console.log(response.data)
+        //console.log(response.data)
         this.from = null;
         this.to = null;
         this.title = "";
