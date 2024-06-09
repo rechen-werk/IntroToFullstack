@@ -21,7 +21,7 @@ export default {
 <template>
   <div class="card" :style="{ top: 64 + start * 68 + 'px', height: duration * 68 + 'px' }">
     <div class="title">{{ title }}</div>
-    <button v-if="isOwnCalendar"><img src="/src/icons/trash-clear.png" alt="Delete appointment" title="Delete"></button>
+    <!--button v-if="isOwnCalendar"><img src="/src/icons/trash-clear.png" alt="Delete appointment" title="Delete"></button-->
   </div>
 
 </template>
