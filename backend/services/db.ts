@@ -101,8 +101,11 @@ async function findCalendarByEmail(email: string): Promise<Calendar> {
     return new Promise((resolve, reject) => {
         db.get(queries.SELECT.CALENDAR_BY_EMAIL, [email], (error: Error, row: any) => {
             if (error || !row) {
-                //reject(error);
-                resolve(null);
+                console.log(`No calendar found for email ${email}!`);
+                //console.log(`error: ${error}`);
+                //console.log(`row: ${row}`);
+
+                resolve(new Calendar("BEGIN:VCALENDAR\nEND:VCALENDAR", email));
             } else {
                 resolve(new Calendar(row.icsContent, row.email));
             }
