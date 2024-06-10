@@ -2,6 +2,8 @@
 This app enables you to book a slot for having a fun time with your mate.
 
 ## Run backend & frontend
+In order to use this application, you need a Google API Client ID! You can then set in `frontend/main.ts`.
+
 To run the backend and frontend, you can either use **npm** or **docker**.
 
 ### npm
